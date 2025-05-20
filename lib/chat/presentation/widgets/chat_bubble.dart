@@ -1,5 +1,6 @@
 import 'package:ai_chat_pot/chat/cubits/chat_cubit/chat_state.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_markdown/flutter_markdown.dart';
 
 class ChatBubble extends StatelessWidget {
   final ChatMessage message;
@@ -57,10 +58,16 @@ class ChatBubble extends StatelessWidget {
                           // ),
                         ],
                       )
-                      : Text(
-                        message.text,
-                        textAlign: TextAlign.right,
-                        style: Theme.of(context).textTheme.bodyMedium,
+                      : MarkdownBody(
+                        data: message.text,
+                        // textAlign: TextAlign.right,
+                        styleSheet: MarkdownStyleSheet(
+                          p: Theme.of(context).textTheme.bodyMedium,
+                          listBullet: Theme.of(
+                            context,
+                          ).textTheme.bodyMedium?.copyWith(color: Colors.green),
+                          a: Theme.of(context).textTheme.bodyMedium?.copyWith(color: Colors.blue),
+                        ),
                       ),
             ),
           ),

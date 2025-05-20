@@ -16,7 +16,14 @@ class ChatCubit extends Cubit<ChatState> {
     emit(ChatState(messages: [...state.messages, typingIndicator]));
 
     Future.delayed(const Duration(seconds: 1), () {
-      final botReply = ChatMessage(text: "Bot: هذه هي الإجابة على سؤالك.", isUser: false);
+      final botReply = ChatMessage(
+        // text: "Bot: هذه هي الإجابة على سؤالك.",
+        text: '''الصلاة هي عمود الدين، ومن تركها متعمدًا فقد ضيع دينه.
+
+- الفجر: ثاني أهم الصلوات
+- العصر: نصف الدنيا تذهب فيها''',
+        isUser: false,
+      );
 
       final updatedMessages = state.messages.where((msg) => !msg.isTyping).toList()..add(botReply);
 
