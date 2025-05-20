@@ -48,7 +48,12 @@ class ChatScreen extends StatelessWidget {
                         },
                       ),
                     ),
-                    MessageInput(onSend: (text) => context.read<ChatCubit>().sendMessage(text)),
+                    MessageInput(
+                      onSend: (text) {
+                        context.read<ChatCubit>().sendMessage(text);
+                        FocusScope.of(context).unfocus();
+                      },
+                    ),
                   ],
                 );
               },

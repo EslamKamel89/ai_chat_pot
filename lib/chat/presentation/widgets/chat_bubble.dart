@@ -1,6 +1,5 @@
 import 'package:ai_chat_pot/chat/cubits/chat_cubit/chat_state.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_animate/flutter_animate.dart';
 
 class ChatBubble extends StatelessWidget {
   final ChatMessage message;
@@ -36,13 +35,14 @@ class ChatBubble extends StatelessWidget {
               child:
                   message.isTyping
                       ? Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
                         children: [
-                          const SizedBox(width: 4),
-                          const SizedBox(
-                            height: 12,
-                            width: 12,
-                            child: CircularProgressIndicator(strokeWidth: 2),
-                          ),
+                          // const SizedBox(width: 4),
+                          // const SizedBox(
+                          //   height: 12,
+                          //   width: 12,
+                          //   child: CircularProgressIndicator(strokeWidth: 2),
+                          // ),
                           const SizedBox(width: 8),
                           const SizedBox(
                             height: 12,
@@ -50,11 +50,11 @@ class ChatBubble extends StatelessWidget {
                             child: CircularProgressIndicator(strokeWidth: 2),
                           ),
                           const SizedBox(width: 8),
-                          const SizedBox(
-                            height: 12,
-                            width: 12,
-                            child: CircularProgressIndicator(strokeWidth: 2),
-                          ),
+                          // const SizedBox(
+                          //   height: 12,
+                          //   width: 12,
+                          //   child: CircularProgressIndicator(strokeWidth: 2),
+                          // ),
                         ],
                       )
                       : Text(
