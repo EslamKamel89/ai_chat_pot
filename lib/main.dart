@@ -1,3 +1,4 @@
+import 'package:ai_chat_pot/chat/cubits/chat_cubit/chat_cubit.dart';
 import 'package:ai_chat_pot/core/globals.dart';
 import 'package:ai_chat_pot/core/router/app_router.dart';
 import 'package:ai_chat_pot/core/router/app_routes_names.dart';
@@ -16,9 +17,12 @@ void main() async {
   await EasyLocalization.ensureInitialized();
   runApp(
     EasyLocalization(
-      supportedLocales: const [Locale('en'), Locale('ar')],
+      supportedLocales: const [
+        // Locale('en'),
+        Locale('ar'),
+      ],
       path: 'assets/langs', // Path to translation files
-      fallbackLocale: const Locale('en'),
+      fallbackLocale: const Locale('ar'),
       child: const MyApp(),
     ),
   );
@@ -35,7 +39,10 @@ class MyApp extends StatelessWidget {
       minTextAdapt: true,
       splitScreenMode: true,
       child: MultiBlocProvider(
-        providers: [BlocProvider(create: (_) => ThemeCubit())],
+        providers: [
+          BlocProvider(create: (_) => ThemeCubit()),
+          BlocProvider(create: (_) => ChatCubit()),
+        ],
         child: Builder(
           builder: (context) {
             final themeCubit = context.watch<ThemeCubit>();
@@ -44,7 +51,8 @@ class MyApp extends StatelessWidget {
               theme: themeCubit.state,
               debugShowCheckedModeBanner: false,
               initialRoute: AppRoutesNames.splashScreen,
-              locale: context.locale,
+              // locale: context.locale,
+              locale: Locale('ar'),
               supportedLocales: context.supportedLocales,
               localizationsDelegates: context.localizationDelegates,
               onGenerateRoute: serviceLocator<AppRouter>().onGenerateRoute,

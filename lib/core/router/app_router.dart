@@ -1,3 +1,4 @@
+import 'package:ai_chat_pot/chat/presentation/views/chat_screen.dart';
 import 'package:ai_chat_pot/core/router/app_routes_names.dart';
 import 'package:ai_chat_pot/core/router/middleware.dart';
 import 'package:ai_chat_pot/core/screens_example/splash_screen/splash_screen.dart';
@@ -18,6 +19,8 @@ class AppRouter {
           builder: (context) => const UiComponentScreen(),
           settings: routeSettings,
         );
+      case AppRoutesNames.chatScreen:
+        return CustomPageRoute(builder: (context) => ChatScreen(), settings: routeSettings);
 
       default:
         return null;
