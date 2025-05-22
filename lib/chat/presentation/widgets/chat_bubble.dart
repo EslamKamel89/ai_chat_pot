@@ -39,7 +39,7 @@ class ChatBubble extends StatelessWidget {
               ),
               child:
                   message.isTyping
-                      ? Lottie.asset(AssetsData.laoding, height: 100, width: double.infinity)
+                      ? Lottie.asset(AssetsData.loading, height: 100, width: double.infinity)
                       // Row(
                       //   mainAxisAlignment: MainAxisAlignment.center,
                       //   children: [

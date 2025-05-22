@@ -32,7 +32,7 @@ class ChatScreen extends StatelessWidget {
           textDirection: TextDirection.rtl,
           child: SafeArea(
             child: Scaffold(
-              appBar: AppBar(title: const Text("الدردشة الإسلامية"), backgroundColor: Colors.green),
+              appBar: AppBar(title: const Text("دلالات شات"), backgroundColor: Colors.green),
               body: BlocConsumer<ChatCubit, ChatState>(
                 listener: (context, state) {
                   _scrollToBottom();
