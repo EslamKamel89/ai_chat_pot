@@ -1,3 +1,4 @@
+import 'package:ai_chat_pot/chat/controllers/chat_controller.dart';
 import 'package:ai_chat_pot/core/api_service/api_consumer.dart';
 import 'package:ai_chat_pot/core/api_service/dio_consumer.dart';
 import 'package:ai_chat_pot/core/router/app_router.dart';
@@ -19,7 +20,5 @@ Future initServiceLocator() async {
     () => AppMiddleWare(sharedPreferences: serviceLocator()),
   );
   serviceLocator.registerLazySingleton<AppRouter>(() => AppRouter(appMiddleWare: serviceLocator()));
-
-  // serviceLocator.registerLazySingleton<HomeRemoteDataSource>(() => HomeRemoteDataSource(api: serviceLocator()));
-  // serviceLocator.registerLazySingleton<HomeRepo>(() => HomeRepoImp(homeRemoteDataSource: serviceLocator()));
+  serviceLocator.registerLazySingleton<ChatController>(() => ChatController());
 }

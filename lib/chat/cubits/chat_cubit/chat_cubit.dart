@@ -1,33 +1,26 @@
-import 'package:ai_chat_pot/core/heleprs/print_helper.dart';
+import 'package:ai_chat_pot/chat/controllers/chat_controller.dart';
+import 'package:ai_chat_pot/core/service_locator/service_locator.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import 'chat_state.dart';
 
 class ChatCubit extends Cubit<ChatState> {
   ChatCubit() : super(ChatState(messages: []));
-
-  void sendMessage(String text) {
-    pr(text, 'send Message');
+  ChatController controller = serviceLocator();
+  Future<void> sendMessage(String text) async {
     final userMessage = ChatMessage(text: text, isUser: true);
     emit(ChatState(messages: [...state.messages, userMessage]));
 
     // Add typing indicator
     final typingIndicator = ChatMessage(text: '', isUser: false, isTyping: true);
     emit(ChatState(messages: [...state.messages, typingIndicator]));
-
-    Future.delayed(const Duration(seconds: 1), () {
-      final botReply = ChatMessage(
-        // text: "Bot: هذه هي الإجابة على سؤالك.",
-        text: '''الصلاة هي عمود الدين، ومن تركها متعمدًا فقد ضيع دينه.
-
-- الفجر: ثاني أهم الصلوات
-- العصر: نصف الدنيا تذهب فيها''',
-        isUser: false,
-      );
-
-      final updatedMessages = state.messages.where((msg) => !msg.isTyping).toList()..add(botReply);
-
-      emit(ChatState(messages: updatedMessages));
-    });
+    String response = await controller.ask(text);
+    final botReply = ChatMessage(
+      // text: "Bot: هذه هي الإجابة على سؤالك.",
+      text: response,
+      isUser: false,
+    );
+    final updatedMessages = state.messages.where((msg) => !msg.isTyping).toList()..add(botReply);
+    emit(ChatState(messages: updatedMessages));
   }
 }

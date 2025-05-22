@@ -1,6 +1,10 @@
 import 'package:ai_chat_pot/chat/cubits/chat_cubit/chat_state.dart';
+import 'package:ai_chat_pot/chat/helpers/clean_reply.dart';
+import 'package:ai_chat_pot/utils/assets/assets.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_markdown/flutter_markdown.dart';
+import 'package:lottie/lottie.dart';
 
 class ChatBubble extends StatelessWidget {
   final ChatMessage message;
@@ -21,10 +25,10 @@ class ChatBubble extends StatelessWidget {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 6, horizontal: 12),
       child: Row(
-        mainAxisAlignment: isUser ? MainAxisAlignment.end : MainAxisAlignment.start,
+        mainAxisAlignment: !isUser ? MainAxisAlignment.end : MainAxisAlignment.start,
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          if (!isUser) avatar,
+          if (isUser) avatar,
           Flexible(
             child: Container(
               margin: const EdgeInsets.only(left: 8, right: 8),
@@ -35,43 +39,38 @@ class ChatBubble extends StatelessWidget {
               ),
               child:
                   message.isTyping
-                      ? Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          // const SizedBox(width: 4),
-                          // const SizedBox(
-                          //   height: 12,
-                          //   width: 12,
-                          //   child: CircularProgressIndicator(strokeWidth: 2),
-                          // ),
-                          const SizedBox(width: 8),
-                          const SizedBox(
-                            height: 12,
-                            width: 12,
-                            child: CircularProgressIndicator(strokeWidth: 2),
+                      ? Lottie.asset(AssetsData.laoding, height: 100, width: double.infinity)
+                      // Row(
+                      //   mainAxisAlignment: MainAxisAlignment.center,
+                      //   children: [
+                      //     const SizedBox(width: 8),
+                      //     const SizedBox(
+                      //       height: 12,
+                      //       width: 12,
+                      //       child: CircularProgressIndicator(strokeWidth: 2),
+                      //     ),
+                      //     const SizedBox(width: 8),
+                      //   ],
+                      // )
+                      : InkWell(
+                        onTap: () {
+                          Clipboard.setData(ClipboardData(text: message.text));
+                        },
+                        child: MarkdownBody(
+                          data: cleanReply(message.text),
+                          // textAlign: TextAlign.right,
+                          styleSheet: MarkdownStyleSheet(
+                            p: Theme.of(context).textTheme.bodyMedium,
+                            listBullet: Theme.of(
+                              context,
+                            ).textTheme.bodyMedium?.copyWith(color: Colors.green),
+                            a: Theme.of(context).textTheme.bodyMedium?.copyWith(color: Colors.blue),
                           ),
-                          const SizedBox(width: 8),
-                          // const SizedBox(
-                          //   height: 12,
-                          //   width: 12,
-                          //   child: CircularProgressIndicator(strokeWidth: 2),
-                          // ),
-                        ],
-                      )
-                      : MarkdownBody(
-                        data: message.text,
-                        // textAlign: TextAlign.right,
-                        styleSheet: MarkdownStyleSheet(
-                          p: Theme.of(context).textTheme.bodyMedium,
-                          listBullet: Theme.of(
-                            context,
-                          ).textTheme.bodyMedium?.copyWith(color: Colors.green),
-                          a: Theme.of(context).textTheme.bodyMedium?.copyWith(color: Colors.blue),
                         ),
                       ),
             ),
           ),
-          if (isUser) avatar,
+          if (!isUser) avatar,
         ],
       ),
     );
