@@ -33,18 +33,18 @@ class _SplashScreenState extends State<SplashScreen> {
             children: [
               // Crescent moon with a star
               const SizedBox(height: 20),
-              Image.asset(AssetsData.logo, width: 100, height: 100),
+              Image.asset(AssetsData.logo, height: 200),
               // Animated App Title
               // const Text(
               //   'دلالات شات',
               //   style: TextStyle(fontSize: 28, fontWeight: FontWeight.bold, color: Colors.white),
               // ).animate().fadeIn(delay: 1000.ms, duration: 1000.ms),
               const SizedBox(height: 10),
-              const Text(
-                'القرآن والسنة .. والإجابة بضغطة زر',
-                textAlign: TextAlign.center,
-                style: TextStyle(fontSize: 16, color: Colors.white54),
-              ).animate().fadeIn(delay: 1500.ms, duration: 1000.ms),
+              // const Text(
+              //   'القرآن والسنة .. والإجابة بضغطة زر',
+              //   textAlign: TextAlign.center,
+              //   style: TextStyle(fontSize: 16, color: Colors.white54),
+              // ).animate().fadeIn(delay: 1500.ms, duration: 1000.ms),
             ],
           ) // Drop from top
           .animate().moveY(

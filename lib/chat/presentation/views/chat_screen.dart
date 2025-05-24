@@ -7,10 +7,21 @@ import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-class ChatScreen extends StatelessWidget {
-  ChatScreen({super.key});
+class ChatScreen extends StatefulWidget {
+  const ChatScreen({super.key});
 
+  @override
+  State<ChatScreen> createState() => _ChatScreenState();
+}
+
+class _ChatScreenState extends State<ChatScreen> {
   final ScrollController _scrollController = ScrollController();
+  late ChatCubit controller;
+  @override
+  void initState() {
+    controller = context.read<ChatCubit>();
+    super.initState();
+  }
 
   void _scrollToBottom() {
     WidgetsBinding.instance.addPostFrameCallback((_) {
@@ -55,7 +66,7 @@ class ChatScreen extends StatelessWidget {
                         ),
                         MessageInput(
                           onSend: (text) {
-                            context.read<ChatCubit>().sendMessage(text);
+                            controller.sendMessage(text);
                             FocusScope.of(context).unfocus();
                           },
                         ),

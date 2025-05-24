@@ -1,11 +1,23 @@
+import 'dart:convert';
+
 import 'package:ai_chat_pot/chat/controllers/chat_controller.dart';
 import 'package:ai_chat_pot/core/service_locator/service_locator.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:ai_chat_pot/core/static_data/shared_prefrences_key.dart';
+import 'package:hydrated_bloc/hydrated_bloc.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import 'chat_state.dart';
 
 class ChatCubit extends Cubit<ChatState> {
+  final sharedPreferences = serviceLocator<SharedPreferences>();
   ChatCubit() : super(ChatState(messages: []));
+  void init() {
+    List<String> chatData = sharedPreferences.getStringList(ShPrefKey.chatData) ?? [];
+    emit(
+      ChatState(messages: chatData.map((chat) => ChatMessage.fromJson(jsonDecode(chat))).toList()),
+    );
+  }
+
   ChatController controller = serviceLocator();
   Future<void> sendMessage(String text) async {
     final userMessage = ChatMessage(text: text, isUser: true);
@@ -22,5 +34,9 @@ class ChatCubit extends Cubit<ChatState> {
     );
     final updatedMessages = state.messages.where((msg) => !msg.isTyping).toList()..add(botReply);
     emit(ChatState(messages: updatedMessages));
+    sharedPreferences.setStringList(
+      ShPrefKey.chatData,
+      state.messages.map((chat) => jsonEncode(chat.toJson())).toList(),
+    );
   }
 }

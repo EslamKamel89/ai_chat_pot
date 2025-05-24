@@ -3,7 +3,7 @@ import 'package:ai_chat_pot/chat/helpers/clean_reply.dart';
 import 'package:ai_chat_pot/utils/assets/assets.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter_markdown/flutter_markdown.dart';
+import 'package:flutter_html/flutter_html.dart';
 import 'package:lottie/lottie.dart';
 
 class ChatBubble extends StatelessWidget {
@@ -56,16 +56,21 @@ class ChatBubble extends StatelessWidget {
                         onTap: () {
                           Clipboard.setData(ClipboardData(text: message.text));
                         },
-                        child: MarkdownBody(
+
+                        // child: MarkdownBody(
+                        //   data: cleanReply(message.text),
+                        //   // textAlign: TextAlign.right,
+                        //   styleSheet: MarkdownStyleSheet(
+                        //     p: TextStyle(color: Colors.green),
+                        //     listBullet: Theme.of(
+                        //       context,
+                        //     ).textTheme.bodyMedium?.copyWith(color: Colors.green),
+                        //     a: Theme.of(context).textTheme.bodyMedium?.copyWith(color: Colors.blue),
+                        //   ),
+                        // ),
+                        child: Html(
                           data: cleanReply(message.text),
                           // textAlign: TextAlign.right,
-                          styleSheet: MarkdownStyleSheet(
-                            p: Theme.of(context).textTheme.bodyMedium,
-                            listBullet: Theme.of(
-                              context,
-                            ).textTheme.bodyMedium?.copyWith(color: Colors.green),
-                            a: Theme.of(context).textTheme.bodyMedium?.copyWith(color: Colors.blue),
-                          ),
                         ),
                       ),
             ),
