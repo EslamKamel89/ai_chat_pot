@@ -8,4 +8,5 @@ class AssetsData {
   static const String onBoarding_6 = "$_relativePath/onboarding_6.png";
   static const String loading = "$_relativePath/loading.json";
   static const String logo = "$_relativePath/logo.png";
+  static const String logoSmall = "$_relativePath/logo_small.png";
 }

@@ -18,8 +18,8 @@ class ChatBubble extends StatelessWidget {
         isUser
             ? CircleAvatar(child: Icon(Icons.person, color: Colors.white, size: 16))
             : CircleAvatar(
-              backgroundColor: Colors.green,
-              child: Text('BOT', style: TextStyle(fontSize: 12, color: Colors.white)),
+              backgroundColor: Colors.green.withOpacity(0.05),
+              child: Image.asset(AssetsData.logoSmall, height: 30),
             );
 
     return Padding(
