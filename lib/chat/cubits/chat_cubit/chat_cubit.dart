@@ -10,29 +10,37 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 import 'chat_state.dart';
 
+ChatHistoryEntity? currentSession;
+
 class ChatCubit extends Cubit<ChatState> {
   final sharedPreferences = serviceLocator<SharedPreferences>();
   ChatController controller = serviceLocator();
   ChatCubit() : super(ChatState(messages: [], conversationsInHistory: []));
-  void init() {
+  void init() async {
     List<String> conversationsInHistoryJson =
         sharedPreferences.getStringList(ShPrefKey.chatHistoryData) ?? [];
     List<ChatHistoryEntity> conversationsInHistory =
         conversationsInHistoryJson
             .map((json) => ChatHistoryEntity.fromJson(jsonDecode(json)))
             .toList();
-    final currentSessionConversation = ChatHistoryEntity(title: '', timestamp: DateTime.now());
+    if (currentSession == null) {
+      currentSession = ChatHistoryEntity(timestamp: DateTime.now());
+      await sharedPreferences.setStringList(ShPrefKey.chatHistoryData, [
+        jsonEncode(currentSession?.toJson()),
+        ...conversationsInHistoryJson,
+      ]);
+      conversationsInHistory = [currentSession!, ...conversationsInHistory];
+    }
     List<String> chatDataJson =
-        sharedPreferences.getStringList("${ShPrefKey.chatData}.${currentSessionConversation.id}") ??
-        [];
+        sharedPreferences.getStringList("${ShPrefKey.chatData}.${currentSession!.id}") ?? [];
     List<ChatMessageEntity> chatData =
         chatDataJson.map((chat) => ChatMessageEntity.fromJson(jsonDecode(chat))).toList();
     emit(
       state.copyWith(
         conversationsInHistory: conversationsInHistory,
         messages: chatData,
-        currentSessionConversation: currentSessionConversation,
-        selectedConversation: currentSessionConversation,
+        currentSessionConversation: currentSession,
+        selectedConversation: currentSession,
       ),
     );
   }
@@ -43,7 +51,24 @@ class ChatCubit extends Cubit<ChatState> {
       isUser: true,
       chatHistoryId: state.currentSessionConversation!.id!,
     );
-    emit(state.copyWith(messages: [...state.messages, userMessage]));
+
+    emit(
+      state.copyWith(
+        messages: [...state.messages, userMessage],
+        currentSessionConversation: state.currentSessionConversation!.copyWith(
+          title: state.currentSessionConversation?.title ?? text,
+        ),
+        conversationsInHistory:
+            state.conversationsInHistory
+                .map(
+                  (conversation) =>
+                      conversation.id == currentSession!.id
+                          ? conversation.copyWith(title: text)
+                          : conversation,
+                )
+                .toList(),
+      ),
+    );
 
     // Add typing indicator
     final typingIndicator = ChatMessageEntity(

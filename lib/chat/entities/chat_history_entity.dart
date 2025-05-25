@@ -1,9 +1,9 @@
 // ignore_for_file: public_member_api_docs, sort_constructors_first
 class ChatHistoryEntity {
   String? id;
-  final String title;
+  final String? title;
   final DateTime timestamp;
-  ChatHistoryEntity({this.id, required this.title, required this.timestamp}) {
+  ChatHistoryEntity({this.id, this.title, required this.timestamp}) {
     id ??= createId();
   }
 
@@ -24,5 +24,13 @@ class ChatHistoryEntity {
 
   static String createId() {
     return "ChatHistoryEntity.${DateTime.now().millisecondsSinceEpoch}";
+  }
+
+  ChatHistoryEntity copyWith({String? id, String? title, DateTime? timestamp}) {
+    return ChatHistoryEntity(
+      id: id ?? this.id,
+      title: title ?? this.title,
+      timestamp: timestamp ?? this.timestamp,
+    );
   }
 }

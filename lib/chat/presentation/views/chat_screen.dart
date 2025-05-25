@@ -1,6 +1,7 @@
 import 'package:ai_chat_pot/chat/cubits/chat_cubit/chat_cubit.dart';
 import 'package:ai_chat_pot/chat/cubits/chat_cubit/chat_state.dart';
 import 'package:ai_chat_pot/chat/presentation/widgets/chat_bubble.dart';
+import 'package:ai_chat_pot/chat/presentation/widgets/chat_histroy_drawer.dart';
 import 'package:ai_chat_pot/chat/presentation/widgets/message_input.dart';
 import 'package:ai_chat_pot/core/widgets/default_screen_padding.dart';
 import 'package:flutter/material.dart';
@@ -44,6 +45,7 @@ class _ChatScreenState extends State<ChatScreen> {
           child: SafeArea(
             child: Scaffold(
               appBar: AppBar(title: const Text("دلالات شات"), backgroundColor: Colors.green),
+              drawer: ChatHistoryDrawer(),
               body: BlocConsumer<ChatCubit, ChatState>(
                 listener: (context, state) {
                   _scrollToBottom();
