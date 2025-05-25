@@ -18,6 +18,8 @@ class MessageInput extends StatelessWidget {
             child: TextField(
               controller: controller,
               maxLines: null,
+              autofocus: false,
+              // canRequestFocus: false,
               keyboardType: TextInputType.multiline,
               decoration: InputDecoration(
                 hintText: "اكتب سؤالك هنا...",

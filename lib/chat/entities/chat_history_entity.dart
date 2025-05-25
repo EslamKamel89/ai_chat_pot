@@ -14,7 +14,7 @@ class ChatHistoryEntity {
   factory ChatHistoryEntity.fromJson(Map<String, dynamic> json) {
     return ChatHistoryEntity(
       id: json['id'] as String,
-      title: json['title'] as String,
+      title: json['title'] as String?,
       timestamp: DateTime.parse(json['timestamp']),
     );
   }

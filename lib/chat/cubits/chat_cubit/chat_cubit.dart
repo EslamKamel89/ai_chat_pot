@@ -58,15 +58,16 @@ class ChatCubit extends Cubit<ChatState> {
         currentSessionConversation: state.currentSessionConversation!.copyWith(
           title: state.currentSessionConversation?.title ?? text,
         ),
-        conversationsInHistory:
-            state.conversationsInHistory
-                .map(
-                  (conversation) =>
-                      conversation.id == currentSession!.id
-                          ? conversation.copyWith(title: text)
-                          : conversation,
-                )
-                .toList(),
+        conversationsInHistory: cacheChatHistory(
+          state.conversationsInHistory
+              .map(
+                (conversation) =>
+                    conversation.id == currentSession!.id && conversation.title == null
+                        ? conversation.copyWith(title: text)
+                        : conversation,
+              )
+              .toList(),
+        ),
       ),
     );
 
@@ -102,5 +103,13 @@ class ChatCubit extends Cubit<ChatState> {
     List<ChatMessageEntity> chatData =
         chatDataJson.map((chat) => ChatMessageEntity.fromJson(jsonDecode(chat))).toList();
     emit(state.copyWith(messages: chatData, selectedConversation: selectedCoversation));
+  }
+
+  List<ChatHistoryEntity> cacheChatHistory(List<ChatHistoryEntity> conversations) {
+    sharedPreferences.setStringList(
+      ShPrefKey.chatHistoryData,
+      conversations.map((conversation) => jsonEncode(conversation.toJson())).toList(),
+    );
+    return conversations;
   }
 }

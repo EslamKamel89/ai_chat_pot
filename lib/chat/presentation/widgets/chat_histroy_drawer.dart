@@ -80,7 +80,19 @@ class ChatHistoryDrawer extends StatelessWidget {
                     itemCount: state.conversationsInHistory.length,
                     itemBuilder: (context, index) {
                       final chat = state.conversationsInHistory[index];
-                      return _buildChatCard(chat, context);
+                      return InkWell(
+                        onTap: () async {
+                          final controller = context.read<ChatCubit>();
+                          controller.selectConversation(chat.id!);
+                          await Future.delayed(900.ms);
+                          FocusScope.of(context).unfocus();
+                          Navigator.of(context).pop();
+                        },
+                        child: Transform.scale(
+                          scale: state.selectedConversation?.id == chat.id ? 1.2 : 1,
+                          child: _buildChatCard(chat, context),
+                        ),
+                      );
                     },
                   );
                 },
