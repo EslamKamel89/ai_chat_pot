@@ -1,4 +1,4 @@
-import 'package:ai_chat_pot/chat/cubits/chat_cubit/chat_state.dart';
+import 'package:ai_chat_pot/chat/entities/chat_message_entity.dart';
 import 'package:ai_chat_pot/chat/helpers/clean_reply.dart';
 import 'package:ai_chat_pot/utils/assets/assets.dart';
 import 'package:flutter/material.dart';
@@ -7,7 +7,7 @@ import 'package:flutter_html/flutter_html.dart';
 import 'package:lottie/lottie.dart';
 
 class ChatBubble extends StatelessWidget {
-  final ChatMessage message;
+  final ChatMessageEntity message;
 
   const ChatBubble({super.key, required this.message});
 

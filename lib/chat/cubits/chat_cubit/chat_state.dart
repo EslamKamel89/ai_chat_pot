@@ -1,7 +1,9 @@
 // ignore_for_file: public_member_api_docs, sort_constructors_first
 
+import 'package:ai_chat_pot/chat/entities/chat_message_entity.dart';
+
 class ChatState {
-  final List<ChatMessage> messages;
+  final List<ChatMessageEntity> messages;
 
   const ChatState({required this.messages});
 
@@ -11,9 +13,9 @@ class ChatState {
 
   factory ChatState.fromJson(Map<String, dynamic> map) {
     return ChatState(
-      messages: List<ChatMessage>.from(
-        (map['messages'] as List<int>).map<ChatMessage>(
-          (x) => ChatMessage.fromJson(x as Map<String, dynamic>),
+      messages: List<ChatMessageEntity>.from(
+        (map['messages'] as List<int>).map<ChatMessageEntity>(
+          (x) => ChatMessageEntity.fromJson(x as Map<String, dynamic>),
         ),
       ),
     );
@@ -21,35 +23,4 @@ class ChatState {
 
   @override
   String toString() => 'ChatState(messages: $messages)';
-}
-
-class ChatMessage {
-  final String text;
-  final bool isUser;
-  final bool isTyping; // For bot typing indicator
-
-  const ChatMessage({required this.text, required this.isUser, this.isTyping = false});
-
-  ChatMessage copyWith({String? text, bool? isUser, bool? isTyping}) {
-    return ChatMessage(
-      text: text ?? this.text,
-      isUser: isUser ?? this.isUser,
-      isTyping: isTyping ?? this.isTyping,
-    );
-  }
-
-  Map<String, dynamic> toJson() {
-    return <String, dynamic>{'text': text, 'isUser': isUser, 'isTyping': isTyping};
-  }
-
-  factory ChatMessage.fromJson(Map<String, dynamic> map) {
-    return ChatMessage(
-      text: map['text'] as String,
-      isUser: map['isUser'] as bool,
-      isTyping: map['isTyping'] as bool,
-    );
-  }
-
-  @override
-  String toString() => 'ChatMessage(text: $text, isUser: $isUser, isTyping: $isTyping)';
 }

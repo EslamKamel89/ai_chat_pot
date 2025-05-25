@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:ai_chat_pot/chat/controllers/chat_controller.dart';
+import 'package:ai_chat_pot/chat/entities/chat_message_entity.dart';
 import 'package:ai_chat_pot/core/service_locator/service_locator.dart';
 import 'package:ai_chat_pot/core/static_data/shared_prefrences_key.dart';
 import 'package:hydrated_bloc/hydrated_bloc.dart';
@@ -14,20 +15,22 @@ class ChatCubit extends Cubit<ChatState> {
   void init() {
     List<String> chatData = sharedPreferences.getStringList(ShPrefKey.chatData) ?? [];
     emit(
-      ChatState(messages: chatData.map((chat) => ChatMessage.fromJson(jsonDecode(chat))).toList()),
+      ChatState(
+        messages: chatData.map((chat) => ChatMessageEntity.fromJson(jsonDecode(chat))).toList(),
+      ),
     );
   }
 
   ChatController controller = serviceLocator();
   Future<void> sendMessage(String text) async {
-    final userMessage = ChatMessage(text: text, isUser: true);
+    final userMessage = ChatMessageEntity(text: text, isUser: true);
     emit(ChatState(messages: [...state.messages, userMessage]));
 
     // Add typing indicator
-    final typingIndicator = ChatMessage(text: '', isUser: false, isTyping: true);
+    final typingIndicator = ChatMessageEntity(text: '', isUser: false, isTyping: true);
     emit(ChatState(messages: [...state.messages, typingIndicator]));
     String response = await controller.ask(text);
-    final botReply = ChatMessage(
+    final botReply = ChatMessageEntity(
       // text: "Bot: هذه هي الإجابة على سؤالك.",
       text: response,
       isUser: false,
