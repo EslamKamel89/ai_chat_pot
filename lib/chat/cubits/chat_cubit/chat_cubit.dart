@@ -108,6 +108,7 @@ class ChatCubit extends Cubit<ChatState> {
   }
 
   void deleteConversation(String conversationId) {
+    if (state.conversationsInHistory.length <= 1) return;
     state.conversationsInHistory.removeWhere((conversation) => conversation.id == conversationId);
     cacheChatHistory(state.conversationsInHistory);
     emit(state.copyWith());

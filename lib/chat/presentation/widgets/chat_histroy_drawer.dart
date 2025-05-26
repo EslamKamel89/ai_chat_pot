@@ -125,72 +125,76 @@ class _ChatHistoryDrawerState extends State<ChatHistoryDrawer> {
   }
 
   Widget _buildChatCard(ChatHistoryEntity chat, BuildContext context) {
-    return Dismissible(
-      key: UniqueKey(),
-      direction: DismissDirection.horizontal,
-      onDismissed: (_) {
-        controller.deleteConversation(chat.id!);
-      },
-      background: Container(
-        decoration: BoxDecoration(color: Colors.red),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            Padding(
-              padding: EdgeInsets.only(right: 30),
-              child: Icon(MdiIcons.trashCan, color: Colors.white, size: 30),
-            ),
-            Padding(
-              padding: EdgeInsets.only(left: 30),
-              child: Icon(MdiIcons.trashCan, color: Colors.white, size: 30),
-            ),
-          ],
-        ),
-      ),
-      child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
-        child: ClipRRect(
-          borderRadius: BorderRadius.circular(16),
+    final chatCard = Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
+      child: ClipRRect(
+        borderRadius: BorderRadius.circular(16),
 
-          child: Container(
-            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-            decoration: BoxDecoration(
-              color: Colors.grey[200],
-              borderRadius: BorderRadius.circular(16),
-            ),
-            child: Row(
-              children: [
-                // Avatar
-                CircleAvatar(
-                  backgroundColor: Colors.green,
-                  radius: 20,
-                  child: const Icon(Icons.chat_bubble_outline, color: Colors.white, size: 20),
+        child: Container(
+          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+          decoration: BoxDecoration(
+            color: Colors.grey[200],
+            borderRadius: BorderRadius.circular(16),
+          ),
+          child: Row(
+            children: [
+              // Avatar
+              CircleAvatar(
+                backgroundColor: Colors.green,
+                radius: 20,
+                child: const Icon(Icons.chat_bubble_outline, color: Colors.white, size: 20),
+              ),
+              const SizedBox(width: 12),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      chat.title == null
+                          ? "${chat.timestamp.hour}:${chat.timestamp.minute} - ${chat.timestamp.day}/${chat.timestamp.month}/${chat.timestamp.year}"
+                          : chat.title!,
+                      maxLines: 2,
+                      overflow: TextOverflow.ellipsis,
+                      textAlign: TextAlign.right,
+                      style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
+                    ),
+                    const SizedBox(height: 4),
+                  ],
                 ),
-                const SizedBox(width: 12),
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        chat.title == null
-                            ? "${chat.timestamp.hour}:${chat.timestamp.minute} - ${chat.timestamp.day}/${chat.timestamp.month}/${chat.timestamp.year}"
-                            : chat.title!,
-                        maxLines: 2,
-                        overflow: TextOverflow.ellipsis,
-                        textAlign: TextAlign.right,
-                        style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
-                      ),
-                      const SizedBox(height: 4),
-                    ],
-                  ),
-                ),
-              ],
-            ),
+              ),
+            ],
           ),
         ),
-        // ),
       ),
-      // .animate().slideX(begin: 1.0, duration: 300.ms).fadeIn(),
+      // ),
     );
+    if (controller.state.conversationsInHistory.length > 1 &&
+        controller.state.selectedConversation?.id != chat.id) {
+      return Dismissible(
+        key: UniqueKey(),
+        direction: DismissDirection.horizontal,
+        onDismissed: (_) {
+          controller.deleteConversation(chat.id!);
+        },
+        background: Container(
+          decoration: BoxDecoration(color: Colors.red),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Padding(
+                padding: EdgeInsets.only(right: 30),
+                child: Icon(MdiIcons.trashCan, color: Colors.white, size: 30),
+              ),
+              Padding(
+                padding: EdgeInsets.only(left: 30),
+                child: Icon(MdiIcons.trashCan, color: Colors.white, size: 30),
+              ),
+            ],
+          ),
+        ),
+        child: chatCard,
+      );
+    }
+    return chatCard;
   }
 }
