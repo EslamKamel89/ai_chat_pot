@@ -1,6 +1,9 @@
 String cleanReply(String reply) {
   // Remove the pattern 【4:<digits>†الزنا.docx】
   reply = reply.replaceAll(RegExp(r'【.*?】'), '');
+  reply = reply.replaceAll('html```', '');
+  reply = reply.replaceAll('```', '');
+  reply = reply.replaceAll('html', '');
   // reply = reply.replaceAll(RegExp(r'【4:\d{1,3}†الزنا\.docx】'), '');
   // reply = reply.replaceAll(RegExp(r'【\d+:\d+†source】'), '');
 
