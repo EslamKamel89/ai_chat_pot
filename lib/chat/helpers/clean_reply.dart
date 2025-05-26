@@ -26,9 +26,3 @@ String cleanReply(String reply) {
 
   return reply;
 }
-
-void main() {
-  String reply = "كما ورد في الملف الذي أرفقته   وبعض النصوص الأخرى.";
-  String cleaned = cleanReply(reply);
-  print(cleaned); // Output: "بعض النصوص الأخرى."
-}
