@@ -22,6 +22,7 @@ class ChatCubit extends Cubit<ChatState> {
     List<ChatHistoryEntity> conversationsInHistory =
         conversationsInHistoryJson
             .map((json) => ChatHistoryEntity.fromJson(jsonDecode(json)))
+            .where((conversation) => conversation.title != null)
             .toList();
     if (currentSession == null) {
       currentSession = ChatHistoryEntity(timestamp: DateTime.now());

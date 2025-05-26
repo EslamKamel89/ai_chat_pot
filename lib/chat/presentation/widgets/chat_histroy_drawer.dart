@@ -1,9 +1,12 @@
 import 'package:ai_chat_pot/chat/cubits/chat_cubit/chat_cubit.dart';
 import 'package:ai_chat_pot/chat/cubits/chat_cubit/chat_state.dart';
 import 'package:ai_chat_pot/chat/entities/chat_history_entity.dart';
+import 'package:ai_chat_pot/core/extensions/context-extensions.dart';
+import 'package:ai_chat_pot/core/service_locator/service_locator.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class ChatHistoryDrawer extends StatelessWidget {
   // final List<ChatHistoryItem> chats;
@@ -39,28 +42,35 @@ class ChatHistoryDrawer extends StatelessWidget {
                 children: [
                   const Text(
                     "المحادثات السابقة",
-                    style: TextStyle(color: Colors.white, fontSize: 20, fontWeight: FontWeight.bold),
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontSize: 20,
+                      fontWeight: FontWeight.bold,
+                    ),
                   ),
-                  IconButton(icon: const Icon(Icons.close, color: Colors.white), onPressed: Navigator.of(context).pop),
+                  IconButton(
+                    icon: const Icon(Icons.close, color: Colors.white),
+                    onPressed: Navigator.of(context).pop,
+                  ),
                 ],
               ),
             ),
 
             const SizedBox(height: 16),
-            // InkWell(
-            //   onTap: () {
-            //     serviceLocator<SharedPreferences>().clear();
-            //   },
-            //   child: Container(
-            //     padding: EdgeInsets.all(10),
-            //     decoration: BoxDecoration(
-            //       color: context.primaryColor,
-            //       borderRadius: BorderRadius.circular(10),
-            //     ),
-            //     child: Text('clear cache', style: TextStyle(color: Colors.white)),
-            //   ),
-            // ),
-            // const SizedBox(height: 16),
+            InkWell(
+              onTap: () {
+                serviceLocator<SharedPreferences>().clear();
+              },
+              child: Container(
+                padding: EdgeInsets.all(10),
+                decoration: BoxDecoration(
+                  color: context.primaryColor,
+                  borderRadius: BorderRadius.circular(10),
+                ),
+                child: Text('clear cache', style: TextStyle(color: Colors.white)),
+              ),
+            ),
+            const SizedBox(height: 16),
 
             // Chat List
             Expanded(
@@ -110,7 +120,10 @@ class ChatHistoryDrawer extends StatelessWidget {
         // ),
         child: Container(
           padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-          decoration: BoxDecoration(color: Colors.grey[200], borderRadius: BorderRadius.circular(16)),
+          decoration: BoxDecoration(
+            color: Colors.grey[200],
+            borderRadius: BorderRadius.circular(16),
+          ),
           child: Row(
             children: [
               // Avatar
