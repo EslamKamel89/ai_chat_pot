@@ -1,22 +1,37 @@
 import 'package:ai_chat_pot/chat/cubits/chat_cubit/chat_cubit.dart';
 import 'package:ai_chat_pot/chat/cubits/chat_cubit/chat_state.dart';
 import 'package:ai_chat_pot/chat/entities/chat_history_entity.dart';
-import 'package:ai_chat_pot/core/extensions/context-extensions.dart';
-import 'package:ai_chat_pot/core/service_locator/service_locator.dart';
+import 'package:ai_chat_pot/core/widgets/inputs.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:shared_preferences/shared_preferences.dart';
+import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
 
-class ChatHistoryDrawer extends StatelessWidget {
-  // final List<ChatHistoryItem> chats;
-  // final Function(String id) onDelete;
+class ChatHistoryDrawer extends StatefulWidget {
+  const ChatHistoryDrawer({super.key});
 
-  const ChatHistoryDrawer({
-    super.key,
-    // required this.chats,
-    // required this.onDelete,
-  });
+  @override
+  State<ChatHistoryDrawer> createState() => _ChatHistoryDrawerState();
+}
+
+class _ChatHistoryDrawerState extends State<ChatHistoryDrawer> {
+  late final ChatCubit controller;
+  final TextEditingController searchController = TextEditingController();
+  @override
+  void initState() {
+    controller = context.read<ChatCubit>();
+    controller.filterConversations('');
+    searchController.addListener(() {
+      controller.filterConversations(searchController.text);
+    });
+    super.initState();
+  }
+
+  @override
+  void dispose() {
+    searchController.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -57,29 +72,34 @@ class ChatHistoryDrawer extends StatelessWidget {
             ),
 
             const SizedBox(height: 16),
-            InkWell(
-              onTap: () {
-                serviceLocator<SharedPreferences>().clear();
-              },
-              child: Container(
-                padding: EdgeInsets.all(10),
-                decoration: BoxDecoration(
-                  color: context.primaryColor,
-                  borderRadius: BorderRadius.circular(10),
-                ),
-                child: Text('clear cache', style: TextStyle(color: Colors.white)),
-              ),
+            Padding(
+              padding: EdgeInsets.symmetric(horizontal: 16),
+              child: CustomTextField("ابحث في المحادثات السابقة", searchController, ''),
             ),
             const SizedBox(height: 16),
+            // InkWell(
+            //   onTap: () {
+            //     serviceLocator<SharedPreferences>().clear();
+            //   },
+            //   child: Container(
+            //     padding: EdgeInsets.all(10),
+            //     decoration: BoxDecoration(
+            //       color: context.primaryColor,
+            //       borderRadius: BorderRadius.circular(10),
+            //     ),
+            //     child: Text('clear cache', style: TextStyle(color: Colors.white)),
+            //   ),
+            // ),
+            // const SizedBox(height: 16),
 
             // Chat List
             Expanded(
               child: BlocBuilder<ChatCubit, ChatState>(
                 builder: (context, state) {
                   return ListView.builder(
-                    itemCount: state.conversationsInHistory.length,
+                    itemCount: state.filteredConversations!.length,
                     itemBuilder: (context, index) {
-                      final chat = state.conversationsInHistory[index];
+                      final chat = state.filteredConversations![index];
                       return InkWell(
                         onTap: () async {
                           final controller = context.read<ChatCubit>();
@@ -105,61 +125,72 @@ class ChatHistoryDrawer extends StatelessWidget {
   }
 
   Widget _buildChatCard(ChatHistoryEntity chat, BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
-      child: ClipRRect(
-        borderRadius: BorderRadius.circular(16),
-        // child: SlidableButton(
-        //   startAction: () => onDelete(chat.id),
-        // actionWidget:
-        // Container(
-        //   alignment: Alignment.center,
-        //   padding: const EdgeInsets.only(left: 16),
-        //   color: Colors.red,
-        //   child: const Icon(Icons.delete, color: Colors.white),
-        // ),
-        child: Container(
-          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-          decoration: BoxDecoration(
-            color: Colors.grey[200],
-            borderRadius: BorderRadius.circular(16),
-          ),
-          child: Row(
-            children: [
-              // Avatar
-              CircleAvatar(
-                backgroundColor: Colors.green,
-                radius: 20,
-                child: const Icon(Icons.chat_bubble_outline, color: Colors.white, size: 20),
-              ),
-              const SizedBox(width: 12),
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      chat.title == null
-                          ? "${chat.timestamp.hour}:${chat.timestamp.minute} - ${chat.timestamp.day}/${chat.timestamp.month}/${chat.timestamp.year}"
-                          : chat.title!,
-                      maxLines: 2,
-                      overflow: TextOverflow.ellipsis,
-                      textAlign: TextAlign.right,
-                      style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
-                    ),
-                    const SizedBox(height: 4),
-                    // Text(
-                    //   "${chat.timestamp.hour}:${chat.timestamp.minute} - ${chat.timestamp.day}/${chat.timestamp.month}/${chat.timestamp.year}",
-                    //   textAlign: TextAlign.right,
-                    //   style: TextStyle(fontSize: 12, color: Colors.grey[600]),
-                    // ),
-                  ],
-                ),
-              ),
-            ],
-          ),
+    return Dismissible(
+      key: UniqueKey(),
+      direction: DismissDirection.horizontal,
+      onDismissed: (_) {
+        controller.deleteConversation(chat.id!);
+      },
+      background: Container(
+        decoration: BoxDecoration(color: Colors.red),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Padding(
+              padding: EdgeInsets.only(right: 30),
+              child: Icon(MdiIcons.trashCan, color: Colors.white, size: 30),
+            ),
+            Padding(
+              padding: EdgeInsets.only(left: 30),
+              child: Icon(MdiIcons.trashCan, color: Colors.white, size: 30),
+            ),
+          ],
         ),
       ),
-      // ),
-    ).animate().slideX(begin: 1.0, duration: 300.ms).fadeIn();
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
+        child: ClipRRect(
+          borderRadius: BorderRadius.circular(16),
+
+          child: Container(
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+            decoration: BoxDecoration(
+              color: Colors.grey[200],
+              borderRadius: BorderRadius.circular(16),
+            ),
+            child: Row(
+              children: [
+                // Avatar
+                CircleAvatar(
+                  backgroundColor: Colors.green,
+                  radius: 20,
+                  child: const Icon(Icons.chat_bubble_outline, color: Colors.white, size: 20),
+                ),
+                const SizedBox(width: 12),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        chat.title == null
+                            ? "${chat.timestamp.hour}:${chat.timestamp.minute} - ${chat.timestamp.day}/${chat.timestamp.month}/${chat.timestamp.year}"
+                            : chat.title!,
+                        maxLines: 2,
+                        overflow: TextOverflow.ellipsis,
+                        textAlign: TextAlign.right,
+                        style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
+                      ),
+                      const SizedBox(height: 4),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
+        // ),
+      ),
+      // .animate().slideX(begin: 1.0, duration: 300.ms).fadeIn(),
+    );
   }
 }

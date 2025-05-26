@@ -39,6 +39,7 @@ class ChatCubit extends Cubit<ChatState> {
     emit(
       state.copyWith(
         conversationsInHistory: conversationsInHistory,
+        filteredConversations: conversationsInHistory,
         messages: chatData,
         currentSessionConversation: currentSession,
         selectedConversation: currentSession,
@@ -106,11 +107,29 @@ class ChatCubit extends Cubit<ChatState> {
     emit(state.copyWith(messages: chatData, selectedConversation: selectedCoversation));
   }
 
+  void deleteConversation(String conversationId) {
+    state.conversationsInHistory.removeWhere((conversation) => conversation.id == conversationId);
+    cacheChatHistory(state.conversationsInHistory);
+    emit(state.copyWith());
+  }
+
   List<ChatHistoryEntity> cacheChatHistory(List<ChatHistoryEntity> conversations) {
     sharedPreferences.setStringList(
       ShPrefKey.chatHistoryData,
       conversations.map((conversation) => jsonEncode(conversation.toJson())).toList(),
     );
     return conversations;
+  }
+
+  void filterConversations(String query) {
+    if (query.isEmpty) {
+      emit(state.copyWith(filteredConversations: state.conversationsInHistory));
+    } else {
+      final filtered =
+          state.conversationsInHistory.where((conversation) {
+            return conversation.title?.toLowerCase().contains(query.toLowerCase()) ?? false;
+          }).toList();
+      emit(state.copyWith(filteredConversations: filtered));
+    }
   }
 }

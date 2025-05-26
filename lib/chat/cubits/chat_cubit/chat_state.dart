@@ -5,6 +5,7 @@ import 'package:ai_chat_pot/chat/entities/chat_message_entity.dart';
 
 class ChatState {
   List<ChatMessageEntity> messages;
+  List<ChatHistoryEntity>? filteredConversations;
   List<ChatHistoryEntity> conversationsInHistory;
   ChatHistoryEntity? currentSessionConversation;
   ChatHistoryEntity? selectedConversation;
@@ -12,6 +13,7 @@ class ChatState {
   ChatState({
     required this.messages,
     required this.conversationsInHistory,
+    this.filteredConversations,
     this.currentSessionConversation,
     this.selectedConversation,
   });
@@ -19,12 +21,14 @@ class ChatState {
   ChatState copyWith({
     List<ChatMessageEntity>? messages,
     List<ChatHistoryEntity>? conversationsInHistory,
+    List<ChatHistoryEntity>? filteredConversations,
     ChatHistoryEntity? currentSessionConversation,
     ChatHistoryEntity? selectedConversation,
   }) {
     return ChatState(
       messages: messages ?? this.messages,
       conversationsInHistory: conversationsInHistory ?? this.conversationsInHistory,
+      filteredConversations: filteredConversations ?? this.filteredConversations,
       currentSessionConversation: currentSessionConversation ?? this.currentSessionConversation,
       selectedConversation: selectedConversation ?? this.selectedConversation,
     );

@@ -29,7 +29,7 @@ class _ChatScreenState extends State<ChatScreen> {
       if (_scrollController.hasClients) {
         _scrollController.animateTo(
           _scrollController.position.maxScrollExtent,
-          duration: const Duration(milliseconds: 300),
+          duration: const Duration(milliseconds: 1000),
           curve: Curves.easeOut,
         );
       }
@@ -54,18 +54,28 @@ class _ChatScreenState extends State<ChatScreen> {
                   return DefaultScreenPadding(
                     child: Column(
                       children: [
-                        Expanded(
-                          child: ListView.builder(
-                            controller: _scrollController,
-                            itemCount: state.messages.length,
-                            itemBuilder: (context, index) {
-                              final message = state.messages[index];
-                              return ChatBubble(
-                                message: message,
-                              ).animate().fadeIn(duration: 300.ms);
-                            },
+                        if (state.messages.isNotEmpty)
+                          Expanded(
+                            child: ListView.builder(
+                              controller: _scrollController,
+                              itemCount: state.messages.length,
+                              itemBuilder: (context, index) {
+                                final message = state.messages[index];
+                                return ChatBubble(
+                                  message: message,
+                                ).animate().fadeIn(duration: 300.ms);
+                              },
+                            ),
                           ),
-                        ),
+                        if (state.messages.isEmpty)
+                          Expanded(
+                            child: Center(
+                              child: Text(
+                                "اطرح سؤالاً",
+                                style: TextStyle(fontSize: 20, color: Colors.grey),
+                              ),
+                            ),
+                          ),
                         MessageInput(
                           onSend: (text) {
                             controller.sendMessage(text);
