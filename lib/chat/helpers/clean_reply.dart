@@ -1,6 +1,19 @@
-String cleanReply(String reply) {
+String cleanReply(String reply, {bool removeHtml = false}) {
   // Remove the pattern 【4:<digits>†الزنا.docx】
   reply = reply.replaceAll(RegExp(r'【.*?】'), '');
+  reply = reply.replaceAll('#', '');
+  reply = reply.replaceAll('*', '');
+  if (removeHtml) {
+    reply =
+        reply
+            .replaceAll(RegExp(r'</p>\s*<p>'), '''
+''')
+            .replaceAll(RegExp(r'<br\s*/?>'), '''
+''')
+            .replaceAll(RegExp(r'<[^>]+>'), '''
+''')
+            .trim();
+  }
   reply = reply.replaceAll('html```', '');
   reply = reply.replaceAll('```', '');
   reply = reply.replaceAll('html', '');
@@ -19,10 +32,21 @@ String cleanReply(String reply) {
   }
 
   // Replace multiple spaces with a single space
-  reply = reply.replaceAll(RegExp(r'\s+'), ' ');
+  if (!removeHtml) {
+    reply = reply.replaceAll(RegExp(r'\s+'), ' ');
+  }
 
   // Trim leading and trailing spaces
   reply = reply.trim();
+  if (removeHtml) {
+    reply = '''
 
+$reply
+
+———
+هذا المحتوى مشارك من تطبيق دلالات شات
+''';
+  }
+  reply = reply.replaceAll('  ', ' ');
   return reply;
 }
