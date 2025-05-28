@@ -48,7 +48,9 @@ class _ChatScreenState extends State<ChatScreen> {
               drawer: ChatHistoryDrawer(),
               body: BlocConsumer<ChatCubit, ChatState>(
                 listener: (context, state) {
-                  _scrollToBottom();
+                  if (state.scrollToBottom == true) {
+                    _scrollToBottom();
+                  }
                 },
                 builder: (context, state) {
                   return DefaultScreenPadding(

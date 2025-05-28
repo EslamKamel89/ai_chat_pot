@@ -43,6 +43,7 @@ class ChatCubit extends Cubit<ChatState> {
         messages: chatData,
         currentSessionConversation: currentSession,
         selectedConversation: currentSession,
+        scrollToBottom: true,
       ),
     );
   }
@@ -80,7 +81,7 @@ class ChatCubit extends Cubit<ChatState> {
       isTyping: true,
       chatHistoryId: state.currentSessionConversation!.id!,
     );
-    emit(state.copyWith(messages: [...state.messages, typingIndicator]));
+    emit(state.copyWith(messages: [...state.messages, typingIndicator], scrollToBottom: true));
     String response = await controller.ask(text);
     final botReply = ChatMessageEntity(
       // text: "Bot: هذه هي الإجابة على سؤالك.",
@@ -104,7 +105,13 @@ class ChatCubit extends Cubit<ChatState> {
         sharedPreferences.getStringList("${ShPrefKey.chatData}.${selectedCoversation.id}") ?? [];
     List<ChatMessageEntity> chatData =
         chatDataJson.map((chat) => ChatMessageEntity.fromJson(jsonDecode(chat))).toList();
-    emit(state.copyWith(messages: chatData, selectedConversation: selectedCoversation));
+    emit(
+      state.copyWith(
+        messages: chatData,
+        selectedConversation: selectedCoversation,
+        scrollToBottom: true,
+      ),
+    );
   }
 
   void deleteConversation(String conversationId) {

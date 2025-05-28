@@ -9,13 +9,14 @@ class ChatState {
   List<ChatHistoryEntity> conversationsInHistory;
   ChatHistoryEntity? currentSessionConversation;
   ChatHistoryEntity? selectedConversation;
-
+  bool? scrollToBottom;
   ChatState({
     required this.messages,
     required this.conversationsInHistory,
     this.filteredConversations,
     this.currentSessionConversation,
     this.selectedConversation,
+    this.scrollToBottom = false,
   });
 
   ChatState copyWith({
@@ -24,6 +25,7 @@ class ChatState {
     List<ChatHistoryEntity>? filteredConversations,
     ChatHistoryEntity? currentSessionConversation,
     ChatHistoryEntity? selectedConversation,
+    bool? scrollToBottom,
   }) {
     return ChatState(
       messages: messages ?? this.messages,
@@ -31,6 +33,7 @@ class ChatState {
       filteredConversations: filteredConversations ?? this.filteredConversations,
       currentSessionConversation: currentSessionConversation ?? this.currentSessionConversation,
       selectedConversation: selectedConversation ?? this.selectedConversation,
+      scrollToBottom: scrollToBottom ?? false,
     );
   }
 
