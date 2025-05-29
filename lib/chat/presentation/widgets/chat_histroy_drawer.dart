@@ -77,6 +77,11 @@ class _ChatHistoryDrawerState extends State<ChatHistoryDrawer> {
               child: CustomTextField("ابحث في المحادثات السابقة", searchController, ''),
             ),
             const SizedBox(height: 16),
+            // Padding(
+            //   padding: EdgeInsets.symmetric(horizontal: 20),
+            //   child: ToggleAssistanceId(onChanged: (_) {}),
+            // ),
+            const SizedBox(height: 16),
             // InkWell(
             //   onTap: () {
             //     serviceLocator<SharedPreferences>().clear();

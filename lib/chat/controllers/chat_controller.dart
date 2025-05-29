@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:ai_chat_pot/chat/presentation/widgets/toggle_assistance.dart';
 import 'package:ai_chat_pot/core/service_locator/service_locator.dart';
 import 'package:ai_chat_pot/env.dart';
 import 'package:dio/dio.dart';
@@ -30,7 +31,7 @@ class ChatController {
       // Step 3: Start assistant run
       final runResponse = await dio.post(
         'https://api.openai.com/v1/threads/$threadId/runs',
-        data: {'assistant_id': Env.assistantId},
+        data: {'assistant_id': getAssistanceId()},
       );
       final runId = runResponse.data['id'];
 
