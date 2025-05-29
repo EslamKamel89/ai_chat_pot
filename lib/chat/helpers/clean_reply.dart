@@ -43,9 +43,11 @@ String cleanReply(String reply, {bool removeHtml = false, String? header}) {
   reply = reply.trim();
   if (header != null) {
     reply = '''
+سؤال: 
 $header
-———
+—————————————————
 
+جواب:
 $reply
 ''';
   }
