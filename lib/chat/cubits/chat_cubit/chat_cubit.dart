@@ -84,10 +84,10 @@ class ChatCubit extends Cubit<ChatState> {
     emit(state.copyWith(messages: [...state.messages, typingIndicator], scrollToBottom: true));
     String response = await controller.ask(text);
     final botReply = ChatMessageEntity(
-      // text: "Bot: هذه هي الإجابة على سؤالك.",
       text: response,
       isUser: false,
       chatHistoryId: state.currentSessionConversation!.id!,
+      question: userMessage.text,
     );
     final updatedMessages = state.messages.where((msg) => !msg.isTyping).toList()..add(botReply);
     emit(state.copyWith(messages: updatedMessages));

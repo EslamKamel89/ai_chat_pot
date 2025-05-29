@@ -5,6 +5,7 @@ class ChatMessageEntity {
   final String text;
   final bool isUser;
   final bool isTyping;
+  String? question;
 
   ChatMessageEntity({
     required this.chatHistoryId,
@@ -12,6 +13,7 @@ class ChatMessageEntity {
     required this.isUser,
     this.isTyping = false,
     this.id,
+    this.question,
   }) {
     id ??= createId();
   }
@@ -22,6 +24,7 @@ class ChatMessageEntity {
     String? text,
     bool? isUser,
     bool? isTyping,
+    String? question,
   }) {
     return ChatMessageEntity(
       id: id ?? this.id,
@@ -29,6 +32,7 @@ class ChatMessageEntity {
       text: text ?? this.text,
       isUser: isUser ?? this.isUser,
       isTyping: isTyping ?? this.isTyping,
+      question: question ?? this.question,
     );
   }
 
@@ -39,6 +43,7 @@ class ChatMessageEntity {
       'text': text,
       'isUser': isUser,
       'isTyping': isTyping,
+      'question': question,
     };
   }
 
@@ -49,6 +54,7 @@ class ChatMessageEntity {
       text: json['text'] as String,
       isUser: json['isUser'] as bool,
       isTyping: json['isTyping'] as bool,
+      question: json['question'] as String?,
     );
   }
   static String createId() {
