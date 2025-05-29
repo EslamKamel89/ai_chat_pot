@@ -60,7 +60,13 @@ class ChatBubble extends StatelessWidget {
                           : InkWell(
                             onTap: () {
                               Clipboard.setData(
-                                ClipboardData(text: cleanReply(message.text, removeHtml: true)),
+                                ClipboardData(
+                                  text: cleanReply(
+                                    message.text,
+                                    removeHtml: true,
+                                    header: message.question,
+                                  ),
+                                ),
                               );
                             },
 
@@ -89,7 +95,13 @@ class ChatBubble extends StatelessWidget {
                     child: InkWell(
                       onTap: () {
                         SharePlus.instance.share(
-                          ShareParams(text: cleanReply(message.text, removeHtml: true)),
+                          ShareParams(
+                            text: cleanReply(
+                              message.text,
+                              removeHtml: true,
+                              header: message.question,
+                            ),
+                          ),
                         );
                       },
                       child: Container(

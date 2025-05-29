@@ -1,4 +1,4 @@
-String cleanReply(String reply, {bool removeHtml = false}) {
+String cleanReply(String reply, {bool removeHtml = false, String? header}) {
   // Remove the pattern 【4:<digits>†الزنا.docx】
   reply = reply.replaceAll(RegExp(r'【.*?】'), '');
   reply = reply.replaceAll('#', '');
@@ -41,9 +41,16 @@ String cleanReply(String reply, {bool removeHtml = false}) {
 
   // Trim leading and trailing spaces
   reply = reply.trim();
+  if (header != null) {
+    reply = '''
+$header
+———
+
+$reply
+''';
+  }
   if (removeHtml) {
     reply = '''
-
 $reply
 
 ———
