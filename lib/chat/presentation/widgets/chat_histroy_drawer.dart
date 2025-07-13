@@ -1,6 +1,7 @@
 import 'package:ai_chat_pot/chat/cubits/chat_cubit/chat_cubit.dart';
 import 'package:ai_chat_pot/chat/cubits/chat_cubit/chat_state.dart';
 import 'package:ai_chat_pot/chat/entities/chat_history_entity.dart';
+import 'package:ai_chat_pot/chat/presentation/widgets/toggle_assistance.dart';
 import 'package:ai_chat_pot/core/widgets/inputs.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
@@ -77,10 +78,10 @@ class _ChatHistoryDrawerState extends State<ChatHistoryDrawer> {
               child: CustomTextField("ابحث في المحادثات السابقة", searchController, ''),
             ),
             const SizedBox(height: 16),
-            // Padding(
-            //   padding: EdgeInsets.symmetric(horizontal: 20),
-            //   child: ToggleAssistanceId(onChanged: (_) {}),
-            // ),
+            Padding(
+              padding: EdgeInsets.symmetric(horizontal: 20),
+              child: ToggleAssistanceId(onChanged: (_) {}),
+            ),
             const SizedBox(height: 16),
             // InkWell(
             //   onTap: () {
