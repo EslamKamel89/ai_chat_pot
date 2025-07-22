@@ -20,5 +20,5 @@ Future initServiceLocator() async {
     () => AppMiddleWare(sharedPreferences: serviceLocator()),
   );
   serviceLocator.registerLazySingleton<AppRouter>(() => AppRouter(appMiddleWare: serviceLocator()));
-  serviceLocator.registerLazySingleton<ChatController>(() => ChatController());
+  serviceLocator.registerLazySingleton<ChatController>(() => ChatController()..initDio());
 }
