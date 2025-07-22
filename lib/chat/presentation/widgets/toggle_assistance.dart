@@ -12,9 +12,14 @@ class ToggleAssistanceId extends StatefulWidget {
 
 int _assistanceIdSelector = 0;
 List<String> _assistances = [Env.assistantId, Env.assistantId2, Env.assistantId3];
+List<String> _apiKeys = [Env.apiKey, Env.apiKey2, Env.apiKey3];
 List<String> _assistancesLabels = ['Main', 'Updated', 'Quran Assistance'];
 String getAssistanceId() {
   return _assistances[_assistanceIdSelector];
+}
+
+String getApiKey() {
+  return _apiKeys[_assistanceIdSelector];
 }
 
 class _ToggleAssistanceIdState extends State<ToggleAssistanceId> {

@@ -3,21 +3,19 @@ import 'dart:async';
 import 'package:ai_chat_pot/chat/presentation/widgets/toggle_assistance.dart';
 import 'package:ai_chat_pot/core/heleprs/print_helper.dart';
 import 'package:ai_chat_pot/core/service_locator/service_locator.dart';
-import 'package:ai_chat_pot/env.dart';
 import 'package:dio/dio.dart';
 
 class ChatController {
   final Dio dio = serviceLocator();
 
-  ChatController() {
+  ChatController();
+
+  Future<String> ask(String question) async {
     dio.options.headers = {
-      'Authorization': 'Bearer ${Env.apiKey}',
+      'Authorization': 'Bearer ${getApiKey()}',
       'OpenAI-Beta': 'assistants=v2',
       'Content-Type': 'application/json',
     };
-  }
-
-  Future<String> ask(String question) async {
     try {
       // Step 1: Create thread
       final threadResponse = await dio.post('https://api.openai.com/v1/threads');
