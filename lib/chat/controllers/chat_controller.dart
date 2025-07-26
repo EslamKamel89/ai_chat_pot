@@ -98,7 +98,7 @@ class ChatController {
     try {
       final response = await dio.get(
         "https://raggy.gaztec.org/http-controller",
-        queryParameters: {"question": question},
+        queryParameters: {"question ": question},
       );
       pr(response.data, t);
       return response.data['data']['answer'] ?? "عذرًا، حدث خطأ. يرجى المحاولة مرة أخرى لاحقًا.";
