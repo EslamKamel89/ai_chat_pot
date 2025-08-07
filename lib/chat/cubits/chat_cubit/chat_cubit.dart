@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:ai_chat_pot/chat/controllers/chat_controller.dart';
 import 'package:ai_chat_pot/chat/entities/chat_history_entity.dart';
 import 'package:ai_chat_pot/chat/entities/chat_message_entity.dart';
+import 'package:ai_chat_pot/chat/presentation/widgets/toggle_assistance.dart';
 import 'package:ai_chat_pot/core/service_locator/service_locator.dart';
 import 'package:ai_chat_pot/core/static_data/shared_prefrences_key.dart';
 import 'package:hydrated_bloc/hydrated_bloc.dart';
@@ -49,6 +50,7 @@ class ChatCubit extends Cubit<ChatState> {
   }
 
   Future<void> sendMessage(String text) async {
+    final lastMessage = state.messages.lastOrNull;
     final userMessage = ChatMessageEntity(
       text: text,
       isUser: true,
@@ -82,12 +84,23 @@ class ChatCubit extends Cubit<ChatState> {
       chatHistoryId: state.currentSessionConversation!.id!,
     );
     emit(state.copyWith(messages: [...state.messages, typingIndicator], scrollToBottom: true));
-    String response = (await controller.ask(text)).text ?? '';
+    final chatResponse = await controller.ask(text, lastMessage);
+    String response = chatResponse.text ?? '';
+    if (getAssistanceId() == 'rag') {
+      response = formatMessageToHtml(response);
+    }
+    if (chatResponse.ayat != null && chatResponse.ayat?.isNotEmpty == true) {
+      response += formatVersesToHtml(chatResponse.ayat ?? []);
+    }
+    if (chatResponse.searchMessage != null) {
+      response += formatMessageToHtml(chatResponse.searchMessage!);
+    }
     final botReply = ChatMessageEntity(
       text: response,
       isUser: false,
       chatHistoryId: state.currentSessionConversation!.id!,
       question: userMessage.text,
+      searchId: chatResponse.searchId,
     );
     final updatedMessages = state.messages.where((msg) => !msg.isTyping).toList()..add(botReply);
     emit(state.copyWith(messages: updatedMessages));
@@ -139,5 +152,59 @@ class ChatCubit extends Cubit<ChatState> {
           }).toList();
       emit(state.copyWith(filteredConversations: filtered));
     }
+  }
+
+  String formatVersesToHtml(List<String> verses) {
+    final buffer = StringBuffer();
+    buffer.write('''
+<div style="font-size: 20px;  font-family: 'Traditional Arabic', Arial, sans-serif; direction: rtl; text-align: right;  margin: 0 auto; padding: 5px; background-color: #f5f5f5; border-radius: 10px;">
+الايات
+</div>
+''');
+    buffer.write('''
+<div style="font-family: 'Traditional Arabic', Arial, sans-serif; direction: rtl; text-align: right;  margin: 0 auto; padding: 5px; background-color: #f5f5f5; border-radius: 10px;">
+''');
+
+    for (final verse in verses) {
+      final parts = verse.split(' (');
+      if (parts.length != 2) continue;
+
+      final verseText = parts[0];
+      final reference = '(${parts[1]}';
+
+      buffer.write('''
+  <div style="margin-bottom: 5px; line-height: 1; font-size: 16px; color: #2c3e50;">
+    <p style="margin: 0 0 5px 0; text-align: justify; word-spacing: -2px;">
+      $verseText
+    </p>
+    <p style="margin: 0; font-size: 16px; color: #7f8c8d; text-align: left; direction: ltr;">
+      $reference
+    </p>
+  </div>
+''');
+    }
+
+    buffer.write('</div>');
+
+    return buffer.toString();
+  }
+
+  String formatMessageToHtml(String message) {
+    return '''
+<div style="font-family: 'Traditional Arabic', Arial, sans-serif; 
+             direction: rtl; 
+             text-align: start; 
+             max-width: 600px; 
+             margin: 20px auto; 
+             padding: 5px; 
+             background-color: #f8f9fa; 
+             border-radius: 8px; 
+             box-shadow: 0 2px 4px rgba(0,0,0,0.1); 
+             font-size: 16px; 
+             color: #5a5a5a;
+             line-height: 1;">
+  $message
+</div>
+''';
   }
 }

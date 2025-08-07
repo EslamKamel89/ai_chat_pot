@@ -1,6 +1,7 @@
 // ignore_for_file: public_member_api_docs, sort_constructors_first
 import 'dart:async';
 
+import 'package:ai_chat_pot/chat/entities/chat_message_entity.dart';
 import 'package:ai_chat_pot/chat/presentation/widgets/toggle_assistance.dart';
 import 'package:ai_chat_pot/core/api_service/api_interceptors.dart';
 import 'package:ai_chat_pot/core/heleprs/print_helper.dart';
@@ -28,9 +29,9 @@ class ChatController {
 
   ChatController();
 
-  Future<ChatResponse> ask(String question) async {
+  Future<ChatResponse> ask(String question, ChatMessageEntity? lastMessage) async {
     if (getAssistanceId() == 'rag') {
-      return await _askRag(question);
+      return await _askRag(question, lastMessage);
     }
     dio.options.headers = {
       'Authorization': 'Bearer ${getApiKey()}',
@@ -81,7 +82,7 @@ class ChatController {
 
       for (var message in messages) {
         if (message['role'] == 'assistant') {
-          return message['content'][0]['text']['value'] ?? 'No reply found.';
+          return ChatResponse(text: message['content'][0]['text']['value'] ?? 'No reply found.');
         }
       }
 
@@ -93,7 +94,7 @@ class ChatController {
     }
   }
 
-  Future<ChatResponse> _askRag(String question) async {
+  Future<ChatResponse> _askRag(String question, ChatMessageEntity? lastMessage) async {
     dio.options.headers = {'Content-Type': 'application/json'};
     final t = prt('_askBag - ChatController');
     try {
@@ -102,9 +103,37 @@ class ChatController {
         queryParameters: {"question ": question},
       );
       pr(response.data, t);
-      return ChatResponse(
+      final chatResponse = ChatResponse(
         text: response.data['data']['answer'] ?? "عذرًا، حدث خطأ. يرجى المحاولة مرة أخرى لاحقًا.",
       );
+      await _searchRag(question, chatResponse, lastMessage);
+      return chatResponse;
+    } on DioException catch (e) {
+      pr('Dio error: $e', t);
+      return pr(ChatResponse(text: 'Dio error: ${e.message ?? "unkwon error"}'), t);
+    } catch (e) {
+      return pr(ChatResponse(text: 'Error: $e'), t);
+    }
+  }
+
+  Future _searchRag(
+    String question,
+    ChatResponse chatResponse,
+    ChatMessageEntity? lastMessage,
+  ) async {
+    dio.options.headers = {'Content-Type': 'application/json'};
+    final t = prt('_searchRag - ChatController');
+    try {
+      final response = await dio.get(
+        "https://raggy.gaztec.org/get-ayat",
+        queryParameters: {"question": question, 'userid': lastMessage?.searchId},
+      );
+      pr(response.data, t);
+      final List<dynamic> ayat = response.data?['data']?['ayat'] ?? [];
+      chatResponse.ayat = ayat.map((a) => a.toString()).toList();
+      chatResponse.searchId = response.data?['data']?['Pmsg_id'];
+      chatResponse.hasFollowUp = response.data?['data']?['followUp'];
+      chatResponse.searchMessage = response.data?['data']?['message'];
     } on DioException catch (e) {
       pr('Dio error: $e', t);
       return pr(ChatResponse(text: 'Dio error: ${e.message ?? "unkwon error"}'), t);
@@ -118,8 +147,11 @@ class ChatResponse {
   String? text;
   List<String>? ayat;
   String? searchId;
-  ChatResponse({this.text, this.ayat, this.searchId});
+  bool? hasFollowUp;
+  String? searchMessage;
+  ChatResponse({this.text, this.ayat, this.searchId, this.hasFollowUp, this.searchMessage});
 
   @override
-  String toString() => 'ChatResponse(text: $text, ayat: $ayat, searchId: $searchId)';
+  String toString() =>
+      'ChatResponse(text: $text, ayat: $ayat, searchId: $searchId , hasFollowUp: $hasFollowUp, searchMessage: $searchMessage)';
 }
