@@ -1,3 +1,4 @@
+// ignore_for_file: public_member_api_docs, sort_constructors_first
 import 'dart:async';
 
 import 'package:ai_chat_pot/chat/presentation/widgets/toggle_assistance.dart';
@@ -27,7 +28,7 @@ class ChatController {
 
   ChatController();
 
-  Future<String> ask(String question) async {
+  Future<ChatResponse> ask(String question) async {
     if (getAssistanceId() == 'rag') {
       return await _askRag(question);
     }
@@ -84,15 +85,15 @@ class ChatController {
         }
       }
 
-      return 'No assistant reply found.';
+      return ChatResponse(text: 'No assistant reply found.');
     } on DioException catch (e) {
-      return 'Dio error: ${e.message}';
+      return ChatResponse(text: 'Dio error: ${e.message}');
     } catch (e) {
-      return 'Error: $e';
+      return ChatResponse(text: 'Error: $e');
     }
   }
 
-  Future<String> _askRag(String question) async {
+  Future<ChatResponse> _askRag(String question) async {
     dio.options.headers = {'Content-Type': 'application/json'};
     final t = prt('_askBag - ChatController');
     try {
@@ -101,12 +102,24 @@ class ChatController {
         queryParameters: {"question ": question},
       );
       pr(response.data, t);
-      return response.data['data']['answer'] ?? "عذرًا، حدث خطأ. يرجى المحاولة مرة أخرى لاحقًا.";
+      return ChatResponse(
+        text: response.data['data']['answer'] ?? "عذرًا، حدث خطأ. يرجى المحاولة مرة أخرى لاحقًا.",
+      );
     } on DioException catch (e) {
       pr('Dio error: $e', t);
-      return pr('Dio error: ${e.message ?? "unkwon error"}', t);
+      return pr(ChatResponse(text: 'Dio error: ${e.message ?? "unkwon error"}'), t);
     } catch (e) {
-      return pr('Error: $e', t);
+      return pr(ChatResponse(text: 'Error: $e'), t);
     }
   }
+}
+
+class ChatResponse {
+  String? text;
+  List<String>? ayat;
+  String? searchId;
+  ChatResponse({this.text, this.ayat, this.searchId});
+
+  @override
+  String toString() => 'ChatResponse(text: $text, ayat: $ayat, searchId: $searchId)';
 }

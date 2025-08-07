@@ -82,7 +82,7 @@ class ChatCubit extends Cubit<ChatState> {
       chatHistoryId: state.currentSessionConversation!.id!,
     );
     emit(state.copyWith(messages: [...state.messages, typingIndicator], scrollToBottom: true));
-    String response = await controller.ask(text);
+    String response = (await controller.ask(text)).text ?? '';
     final botReply = ChatMessageEntity(
       text: response,
       isUser: false,
