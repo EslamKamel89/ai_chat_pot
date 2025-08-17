@@ -14,23 +14,23 @@ int _assistanceIdSelector = 0;
 List<String> _assistances = [
   //
   Env.assistantId,
-  Env.assistantId2,
+  // Env.assistantId2,
   // Env.assistantId3,
   'rag',
 ];
 List<String> _apiKeys = [
   //
   Env.apiKey,
-  Env.apiKey2,
+  // Env.apiKey2,
   // Env.apiKey3,
   'rag',
 ];
 List<String> _assistancesLabels = [
   //
-  'Main',
-  'Updated',
+  'Open AI',
+  // 'Updated',
   // 'Quran Assistance',
-  'Rag',
+  'Our AI',
 ];
 String getAssistanceId() {
   return _assistances[_assistanceIdSelector];

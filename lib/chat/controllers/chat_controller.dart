@@ -31,7 +31,7 @@ class ChatController {
 
   Future<ChatResponse> ask(String question, ChatMessageEntity? lastMessage) async {
     if (getAssistanceId() == 'rag') {
-      return await _askRag(question, lastMessage);
+      return await _askRagTwo(question, lastMessage);
     }
     dio.options.headers = {
       'Authorization': 'Bearer ${getApiKey()}',
@@ -94,9 +94,9 @@ class ChatController {
     }
   }
 
-  Future<ChatResponse> _askRag(String question, ChatMessageEntity? lastMessage) async {
+  Future<ChatResponse> _askRagOne(String question, ChatMessageEntity? lastMessage) async {
     dio.options.headers = {'Content-Type': 'application/json'};
-    final t = prt('_askBag - ChatController');
+    final t = prt('_askBagOne - ChatController');
     try {
       final response = await dio.get(
         "https://raggy.gaztec.org/http-controller",
@@ -106,6 +106,32 @@ class ChatController {
       final chatResponse = ChatResponse(
         text: response.data['data']['answer'] ?? "عذرًا، حدث خطأ. يرجى المحاولة مرة أخرى لاحقًا.",
       );
+      await _searchRag(question, chatResponse, lastMessage);
+      return chatResponse;
+    } on DioException catch (e) {
+      pr('Dio error: $e', t);
+      return pr(ChatResponse(text: 'Dio error: ${e.message ?? "unkwon error"}'), t);
+    } catch (e) {
+      return pr(ChatResponse(text: 'Error: $e'), t);
+    }
+  }
+
+  Future<ChatResponse> _askRagTwo(String question, ChatMessageEntity? lastMessage) async {
+    dio.options.headers = {'Content-Type': 'application/json'};
+    final t = prt('_askBagTwo - ChatController');
+    try {
+      final response = await dio.post(
+        "https://raggy.gaztec.org/proxy",
+        data: {
+          "method": "POST",
+          "body": {"question": question},
+          "path": "generate",
+        },
+      );
+      pr(response.data, t);
+      String text = response.data['Tfser'][0] ?? "عذرًا، حدث خطأ. يرجى المحاولة مرة أخرى لاحقًا.";
+      text = text.split('القواعد المستخدمة للاجابة').first;
+      final chatResponse = ChatResponse(text: text);
       await _searchRag(question, chatResponse, lastMessage);
       return chatResponse;
     } on DioException catch (e) {
@@ -126,7 +152,7 @@ class ChatController {
     try {
       final response = await dio.get(
         "https://raggy.gaztec.org/get-ayat",
-        queryParameters: {"question": question, 'userid': lastMessage?.searchId},
+        queryParameters: {"question": question, 'userid': lastMessage?.searchId ?? -1},
       );
       pr(response.data, t);
       final List<dynamic> ayat = response.data?['data']?['ayat'] ?? [];
