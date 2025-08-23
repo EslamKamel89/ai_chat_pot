@@ -96,7 +96,7 @@ class ChatCubit extends Cubit<ChatState> {
       response += formatMessageToHtml(chatResponse.searchMessage!);
     }
     final botReply = ChatMessageEntity(
-      text: response,
+      text: '<div>$response </div>',
       isUser: false,
       chatHistoryId: state.currentSessionConversation!.id!,
       question: userMessage.text,

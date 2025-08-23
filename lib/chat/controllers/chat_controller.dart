@@ -132,7 +132,9 @@ class ChatController {
       String text = response.data['Tfser'][0] ?? "عذرًا، حدث خطأ. يرجى المحاولة مرة أخرى لاحقًا.";
       text = text.split('القواعد المستخدمة للاجابة').first;
       final chatResponse = ChatResponse(text: text);
-      await _searchRag(question, chatResponse, lastMessage);
+      // await _searchRag(question, chatResponse, lastMessage);
+      final List<dynamic> ayat = response.data?['Ayat'] ?? [];
+      chatResponse.ayat = ayat.map((a) => a.toString()).toList();
       return chatResponse;
     } on DioException catch (e) {
       pr('Dio error: $e', t);
