@@ -92,9 +92,9 @@ class ChatCubit extends Cubit<ChatState> {
     if (chatResponse.ayat != null && chatResponse.ayat?.isNotEmpty == true) {
       response += formatVersesToHtml(chatResponse.ayat ?? []);
     }
-    if (chatResponse.searchMessage != null) {
-      response += formatMessageToHtml(chatResponse.searchMessage!);
-    }
+    // if (chatResponse.searchMessage != null) {
+    //   response += formatMessageToHtml(chatResponse.searchMessage!);
+    // }
     final botReply = ChatMessageEntity(
       text: '<div>$response </div>',
       isUser: false,
@@ -157,12 +157,26 @@ class ChatCubit extends Cubit<ChatState> {
   String formatVersesToHtml(List<String> verses) {
     final buffer = StringBuffer();
     buffer.write('''
-<div style="font-size: 20px;  font-family: 'Traditional Arabic', Arial, sans-serif; direction: rtl; text-align: right;  margin: 0 auto; padding: 5px; background-color: #f5f5f5; border-radius: 10px;">
+<div 
+style=
+"font-size: 24px;  
+margin-top: 20px;
+font-family: 'Traditional Arabic', Arial, sans-serif; 
+direction: rtl; 
+text-align: right;  
+background-color: #f5f5f5; 
+border-radius: 10px;"
+>
 الايات
 </div>
 ''');
     buffer.write('''
-<div style="font-family: 'Traditional Arabic', Arial, sans-serif; direction: rtl; text-align: right;  margin: 0 auto; padding: 5px; background-color: #f5f5f5; border-radius: 10px;">
+<div 
+style="font-family: 'Traditional Arabic', Arial, sans-serif; 
+direction: rtl; 
+text-align: right;  
+background-color: #f5f5f5; 
+border-radius: 10px;">
 ''');
 
     for (final verse in verses) {
@@ -173,11 +187,11 @@ class ChatCubit extends Cubit<ChatState> {
       final reference = '(${parts[1]}';
 
       buffer.write('''
-  <div style="margin-bottom: 5px; line-height: 1; font-size: 16px; color: #2c3e50;">
-    <p style="margin: 0 0 5px 0; text-align: justify; word-spacing: -2px;">
+  <div style=" line-height: 1; font-size: 16px; color: #2c3e50;">
+    <p style="text-align: justify; word-spacing: -2px;">
       $verseText
     </p>
-    <p style="margin: 0; font-size: 16px; color: #7f8c8d; text-align: left; direction: ltr;">
+    <p style=" font-size: 16px; color: #7f8c8d; text-align: left; direction: ltr;">
       $reference
     </p>
   </div>
@@ -186,7 +200,7 @@ class ChatCubit extends Cubit<ChatState> {
 
     buffer.write('</div>');
 
-    return buffer.toString();
+    return "<div>${buffer.toString()}</div>";
   }
 
   String formatMessageToHtml(String message) {
@@ -194,15 +208,11 @@ class ChatCubit extends Cubit<ChatState> {
 <div style="font-family: 'Traditional Arabic', Arial, sans-serif; 
              direction: rtl; 
              text-align: start; 
-             max-width: 600px; 
-             margin: 20px auto; 
-             padding: 5px; 
              background-color: #f8f9fa; 
              border-radius: 8px; 
              box-shadow: 0 2px 4px rgba(0,0,0,0.1); 
              font-size: 16px; 
-             color: #5a5a5a;
-             line-height: 1;">
+             color: #5a5a5a;">
   $message
 </div>
 ''';

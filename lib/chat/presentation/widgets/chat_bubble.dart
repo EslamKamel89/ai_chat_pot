@@ -84,6 +84,11 @@ class ChatBubble extends StatelessWidget {
                             child: Html(
                               data: cleanReply(message.text),
                               // textAlign: TextAlign.right,
+                              style: {
+                                'h1': Style(fontSize: FontSize(30)),
+                                'h2': Style(fontSize: FontSize(28)),
+                                'p': Style(fontSize: FontSize(16)),
+                              },
                             ),
                           ),
                 ),

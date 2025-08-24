@@ -1,4 +1,5 @@
 String cleanReply(String reply, {bool removeHtml = false, String? header}) {
+  // return reply;
   // Remove the pattern 【4:<digits>†الزنا.docx】
   reply = reply.replaceAll(RegExp(r'【.*?】'), '');
   reply = reply.replaceAll('#', '');
@@ -21,6 +22,8 @@ String cleanReply(String reply, {bool removeHtml = false, String? header}) {
   reply = reply.replaceAll('lang="ar"', '');
   reply = reply.replaceAll('< >', '');
   reply = reply.replaceAll('24px', '20px');
+  reply = reply.replaceAll('br', 'wrong');
+  // reply = reply.replaceAll('1.1em', '20px');
   // reply = reply.replaceAll(RegExp(r'【4:\d{1,3}†الزنا\.docx】'), '');
   // reply = reply.replaceAll(RegExp(r'【\d+:\d+†source】'), '');
 
