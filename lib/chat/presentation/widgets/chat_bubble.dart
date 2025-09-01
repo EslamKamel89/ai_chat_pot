@@ -1,5 +1,6 @@
 import 'package:ai_chat_pot/chat/entities/chat_message_entity.dart';
 import 'package:ai_chat_pot/chat/helpers/clean_reply.dart';
+import 'package:ai_chat_pot/chat/presentation/widgets/rating_comment_widget.dart';
 import 'package:ai_chat_pot/utils/assets/assets.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -97,25 +98,41 @@ class ChatBubble extends StatelessWidget {
                     bottom: 5,
                     left: !isUser ? -10 : null,
                     right: isUser ? -10 : null,
-                    child: InkWell(
-                      onTap: () {
-                        SharePlus.instance.share(
-                          ShareParams(
-                            text: cleanReply(
-                              message.text,
-                              removeHtml: true,
-                              header: message.question,
+                    child: Container(
+                      padding: EdgeInsets.symmetric(horizontal: 5, vertical: 5),
+                      decoration: BoxDecoration(
+                        color: Colors.grey.withOpacity(0.6),
+                        borderRadius: BorderRadius.circular(10),
+                      ),
+                      child: Row(
+                        children: [
+                          RatingCommentWidget(
+                            question: message.question ?? '',
+                            answer: message.text,
+                          ),
+                          SizedBox(width: 10),
+                          InkWell(
+                            onTap: () {
+                              SharePlus.instance.share(
+                                ShareParams(
+                                  text: cleanReply(
+                                    message.text,
+                                    removeHtml: true,
+                                    header: message.question,
+                                  ),
+                                ),
+                              );
+                            },
+                            child: Container(
+                              decoration: BoxDecoration(
+                                shape: BoxShape.circle,
+                                color: isUser ? Colors.green : Colors.grey,
+                              ),
+                              padding: EdgeInsets.all(10),
+                              child: Icon(MdiIcons.share, size: 25, color: Colors.white),
                             ),
                           ),
-                        );
-                      },
-                      child: Container(
-                        decoration: BoxDecoration(
-                          shape: BoxShape.circle,
-                          color: isUser ? Colors.green : Colors.grey,
-                        ),
-                        padding: EdgeInsets.all(10),
-                        child: Icon(MdiIcons.share, size: 25, color: Colors.white),
+                        ],
                       ),
                     ),
                   ),

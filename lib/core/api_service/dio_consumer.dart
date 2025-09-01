@@ -94,6 +94,30 @@ class DioConsumer extends ApiConsumer {
   }
 
   @override
+  Future put(
+    String path, {
+    dynamic data,
+    Map<String, dynamic>? queryParameter,
+    bool isFormData = false,
+  }) async {
+    // dio.options.headers = {"Authorization": 'Bearer ${'token'}', "Accept": "application/json"};
+
+    try {
+      if (!(await checkInternet())) {
+        throw OfflineException();
+      }
+      final response = await dio.put(
+        path,
+        data: isFormData ? FormData.fromMap(data) : data,
+        queryParameters: queryParameter,
+      );
+      return response.data;
+    } catch (e) {
+      rethrow;
+    }
+  }
+
+  @override
   Future post(
     String path, {
     dynamic data,

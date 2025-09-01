@@ -1,4 +1,3 @@
-import 'package:ai_chat_pot/env.dart';
 import 'package:flutter/material.dart';
 
 class ToggleAssistanceId extends StatefulWidget {
@@ -13,21 +12,21 @@ class ToggleAssistanceId extends StatefulWidget {
 int _assistanceIdSelector = 0;
 List<String> _assistances = [
   //
-  Env.assistantId,
+  // Env.assistantId,
   // Env.assistantId2,
   // Env.assistantId3,
   'rag',
 ];
 List<String> _apiKeys = [
   //
-  Env.apiKey,
+  // Env.apiKey,
   // Env.apiKey2,
   // Env.apiKey3,
   'rag',
 ];
 List<String> _assistancesLabels = [
   //
-  'Open AI',
+  // 'Open AI',
   // 'Updated',
   // 'Quran Assistance',
   'Our AI',
