@@ -2,9 +2,10 @@ import 'package:flutter/material.dart';
 
 typedef OnSendMessage = void Function(String text);
 
+final FocusNode messageInputFocusNode = FocusNode();
+
 class MessageInput extends StatelessWidget {
   final OnSendMessage onSend;
-
   const MessageInput({super.key, required this.onSend});
 
   @override
@@ -20,6 +21,7 @@ class MessageInput extends StatelessWidget {
               controller: controller,
               maxLines: null,
               autofocus: false,
+              focusNode: messageInputFocusNode,
               // canRequestFocus: false,
               keyboardType: TextInputType.multiline,
               decoration: InputDecoration(

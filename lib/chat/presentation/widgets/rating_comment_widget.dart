@@ -1,5 +1,5 @@
 import 'package:ai_chat_pot/chat/controllers/ratting_controller.dart';
-import 'package:ai_chat_pot/core/heleprs/print_helper.dart';
+import 'package:ai_chat_pot/chat/presentation/widgets/message_input.dart';
 import 'package:ai_chat_pot/core/service_locator/service_locator.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
@@ -13,6 +13,7 @@ class RatingCommentWidget extends StatefulWidget {
 }
 
 class _RatingCommentWidgetState extends State<RatingCommentWidget> {
+  FocusNode ratingCommentFocusNode = FocusNode();
   int _rating = 0;
   final commentTextController = TextEditingController();
   @override
@@ -20,6 +21,12 @@ class _RatingCommentWidgetState extends State<RatingCommentWidget> {
     super.initState();
     // _rating = widget.initialRating;
     // commentTextController.text = widget.initialComment;
+  }
+
+  @override
+  void dispose() {
+    ratingCommentFocusNode.dispose();
+    super.dispose();
   }
 
   void _showRatingModal(BuildContext context) {
@@ -65,6 +72,7 @@ class _RatingCommentWidgetState extends State<RatingCommentWidget> {
                 TextField(
                   maxLines: 3,
                   controller: commentTextController,
+                  focusNode: ratingCommentFocusNode,
                   decoration: InputDecoration(
                     hintText: "أضف تعليقك هنا...",
                     border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
@@ -74,44 +82,24 @@ class _RatingCommentWidgetState extends State<RatingCommentWidget> {
                 const SizedBox(height: 24),
                 Align(
                   alignment: Alignment.center,
-                  child: InkWell(
+                  child: RatingCommentSendButton(
                     onTap: () async {
-                      // final controller = Get.find<ChatController>();
-                      // await controller.addRating(
-                      //   _rating,
-                      //   commentTextController.text,
-                      //   widget.id ?? '',
-                      // );
                       final RatingController controller = serviceLocator();
                       String? id = await controller.getId(widget.question, widget.answer);
                       if (id == null) return;
                       await controller.addRating(_rating, commentTextController.text, id);
-                      pr({
-                        'id': id,
-                        'question': widget.question,
-                        'answer': widget.answer,
-                        'rating': _rating,
-                        'comment': commentTextController.text,
-                      }, 'Rating Info');
+                      // pr({
+                      //   'id': id,
+                      //   'question': widget.question,
+                      //   'answer': widget.answer,
+                      //   'rating': _rating,
+                      //   'comment': commentTextController.text,
+                      // }, 'Rating Info');
                       commentTextController.text = '';
+                      ratingCommentFocusNode.unfocus();
+                      messageInputFocusNode.unfocus();
                       Navigator.of(context).pop();
                     },
-                    child: Container(
-                      decoration: BoxDecoration(
-                        // color: Colors.green.withOpacity(0.3),
-                        borderRadius: BorderRadius.circular(15),
-                      ),
-                      padding: EdgeInsets.symmetric(vertical: 10, horizontal: 15),
-                      alignment: Alignment.center,
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Text("إرسال التقييم", style: TextStyle(color: Colors.white)),
-                          SizedBox(width: 10),
-                          const Icon(Icons.check, color: Colors.white),
-                        ],
-                      ),
-                    ),
                   ),
                 ),
                 const SizedBox(height: 16),
@@ -198,4 +186,45 @@ class _StarRatingState extends State<StarRating> {
     color: index < rating ? Colors.orange : Colors.grey,
     size: 28,
   ).animate().scale().then(delay: Duration(milliseconds: index * 50));
+}
+
+class RatingCommentSendButton extends StatefulWidget {
+  const RatingCommentSendButton({super.key, required this.onTap});
+  final void Function() onTap;
+  @override
+  State<RatingCommentSendButton> createState() => _RatingCommentSendButtonState();
+}
+
+class _RatingCommentSendButtonState extends State<RatingCommentSendButton> {
+  bool loading = false;
+  @override
+  Widget build(BuildContext context) {
+    return InkWell(
+      onTap: () async {
+        setState(() {
+          loading = true;
+        });
+        widget.onTap();
+      },
+      child: Container(
+        decoration: BoxDecoration(
+          // color: Colors.green.withOpacity(0.3),
+          borderRadius: BorderRadius.circular(15),
+        ),
+        padding: EdgeInsets.symmetric(vertical: 10, horizontal: 15),
+        alignment: Alignment.center,
+        child:
+            loading
+                ? Center(child: CircularProgressIndicator())
+                : Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Text("إرسال التقييم", style: TextStyle(color: Colors.black)),
+                    SizedBox(width: 10),
+                    const Icon(Icons.check, color: Colors.black),
+                  ],
+                ),
+      ),
+    );
+  }
 }

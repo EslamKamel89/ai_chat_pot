@@ -15,7 +15,7 @@ class RatingController {
         addMessageEndpoint,
         data: {"question": question, "answer": answer},
       );
-      return pr(response.data['id'], t);
+      return pr(response['id'], t);
     } catch (e) {
       pr(e, t);
     }
@@ -27,11 +27,11 @@ class RatingController {
     // dio.options.headers = {'Content-Type': 'application/json'};
     final t = "ChatService - addRating";
     try {
-      final response = await api.patch(
+      final response = await api.put(
         "$addRatingEndpoint/$id",
         data: {"rate": rate, "comment": comment},
       );
-      return pr(response.data['id'], t);
+      return pr(response['id'], t);
     } catch (e) {
       pr(e, t);
     }
