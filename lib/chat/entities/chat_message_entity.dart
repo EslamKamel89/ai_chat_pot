@@ -65,7 +65,7 @@ class ChatMessageEntity {
       isUser: json['isUser'] as bool,
       isTyping: json['isTyping'] as bool,
       question: json['question'] as String?,
-      hasFollowUp: json['hasFollowUp'] as bool,
+      hasFollowUp: (json['hasFollowUp'] ?? false) as bool,
       searchId: json['searchId'] as String?,
     );
   }
