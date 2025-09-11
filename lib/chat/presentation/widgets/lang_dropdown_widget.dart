@@ -1,3 +1,4 @@
+import 'package:ai_chat_pot/chat/presentation/widgets/language_selector.dart';
 import 'package:ai_chat_pot/core/extensions/context-extensions.dart';
 import 'package:ai_chat_pot/utils/styles/styles.dart';
 import 'package:flutter/material.dart';
@@ -9,9 +10,9 @@ class LangDropDownWidget extends StatefulWidget {
     required this.label,
     required this.onSelect,
   });
-  final List<String> options;
+  final List<LocaleEntity> options;
   final String label;
-  final Function onSelect;
+  final Function(String) onSelect;
   @override
   State<LangDropDownWidget> createState() => _LangDropDownWidgetState();
 }
@@ -20,13 +21,17 @@ class _LangDropDownWidgetState extends State<LangDropDownWidget> {
   String? selectedValue;
   @override
   Widget build(BuildContext context) {
-    return DropdownButtonFormField(
+    return DropdownButtonFormField<String>(
       decoration: _decoration(widget.label),
       items:
           widget.options
-              .map((option) => DropdownMenuItem<String>(value: option, child: txt(option)))
+              .map(
+                (option) =>
+                    DropdownMenuItem<String>(value: option.localeCode, child: txt(option.label)),
+              )
               .toList(),
       onChanged: (String? value) {
+        if (value == null) return;
         widget.onSelect(value);
         setState(() {
           selectedValue = value;

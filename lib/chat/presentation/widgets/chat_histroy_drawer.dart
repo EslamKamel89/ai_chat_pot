@@ -78,7 +78,7 @@ class _ChatHistoryDrawerState extends State<ChatHistoryDrawer> {
               child: CustomTextField("ابحث في المحادثات السابقة", searchController, ''),
             ),
             const SizedBox(height: 16),
-            LanguageDropdown(),
+            Padding(padding: EdgeInsets.symmetric(horizontal: 13), child: LanguageDropdown()),
             // Padding(
             //   padding: EdgeInsets.symmetric(horizontal: 20),
             //   child: ToggleAssistanceId(onChanged: (_) {}),
