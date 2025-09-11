@@ -1,6 +1,7 @@
 import 'package:ai_chat_pot/chat/entities/chat_message_entity.dart';
 import 'package:ai_chat_pot/chat/helpers/clean_reply.dart';
 import 'package:ai_chat_pot/chat/presentation/widgets/rating_comment_widget.dart';
+import 'package:ai_chat_pot/core/heleprs/print_helper.dart';
 import 'package:ai_chat_pot/utils/assets/assets.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -83,7 +84,7 @@ class ChatBubble extends StatelessWidget {
                             //   ),
                             // ),
                             child: Html(
-                              data: cleanReply(message.text),
+                              data: pr(cleanReply(message.text), 'clean reply'),
                               // textAlign: TextAlign.right,
                               style: {
                                 'h1': Style(fontSize: FontSize(30)),

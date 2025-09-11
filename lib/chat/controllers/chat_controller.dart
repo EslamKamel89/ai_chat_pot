@@ -135,7 +135,7 @@ class ChatController {
       // await _searchRag(question, chatResponse, lastMessage);
       final List<dynamic> ayat = response.data?['Ayat'] ?? [];
       chatResponse.ayat = ayat.map((a) => a.toString()).toList();
-      return chatResponse;
+      return pr(chatResponse, "$t - chatResponse");
     } on DioException catch (e) {
       pr('Dio error: $e', t);
       return pr(ChatResponse(text: 'Dio error: ${e.message ?? "unkwon error"}'), t);
