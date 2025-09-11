@@ -20,8 +20,15 @@ class LangDropDownWidget extends StatefulWidget {
 class _LangDropDownWidgetState extends State<LangDropDownWidget> {
   String? selectedValue;
   @override
+  void initState() {
+    selectedValue = selectedLang?.localeCode;
+    super.initState();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return DropdownButtonFormField<String>(
+      value: selectedValue,
       decoration: _decoration(widget.label),
       items:
           widget.options

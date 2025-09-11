@@ -2,6 +2,7 @@
 import 'dart:async';
 
 import 'package:ai_chat_pot/chat/entities/chat_message_entity.dart';
+import 'package:ai_chat_pot/chat/presentation/widgets/language_selector.dart';
 import 'package:ai_chat_pot/chat/presentation/widgets/toggle_assistance.dart';
 import 'package:ai_chat_pot/core/api_service/api_interceptors.dart';
 import 'package:ai_chat_pot/core/heleprs/print_helper.dart';
@@ -124,7 +125,7 @@ class ChatController {
         "https://raggy.gaztec.org/proxy",
         data: {
           "method": "POST",
-          "body": {"question": question},
+          "body": {"question": question, 'lang': selectedLang?.localeCode},
           "path": "generate",
         },
       );
