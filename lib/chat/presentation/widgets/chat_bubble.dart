@@ -1,5 +1,6 @@
 import 'package:ai_chat_pot/chat/entities/chat_message_entity.dart';
 import 'package:ai_chat_pot/chat/helpers/clean_reply.dart';
+import 'package:ai_chat_pot/chat/presentation/widgets/language_selector.dart';
 import 'package:ai_chat_pot/chat/presentation/widgets/rating_comment_widget.dart';
 import 'package:ai_chat_pot/core/heleprs/print_helper.dart';
 import 'package:ai_chat_pot/utils/assets/assets.dart';
@@ -90,6 +91,12 @@ class ChatBubble extends StatelessWidget {
                                 'h1': Style(fontSize: FontSize(30)),
                                 'h2': Style(fontSize: FontSize(28)),
                                 'p': Style(fontSize: FontSize(16)),
+                                '*': Style(
+                                  textAlign:
+                                      selectedLang?.localeCode == 'ar'
+                                          ? TextAlign.right
+                                          : TextAlign.left,
+                                ),
                               },
                             ),
                           ),
