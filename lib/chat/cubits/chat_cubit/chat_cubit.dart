@@ -4,6 +4,7 @@ import 'package:ai_chat_pot/chat/controllers/chat_controller.dart';
 import 'package:ai_chat_pot/chat/entities/chat_history_entity.dart';
 import 'package:ai_chat_pot/chat/entities/chat_message_entity.dart';
 import 'package:ai_chat_pot/chat/presentation/widgets/toggle_assistance.dart';
+import 'package:ai_chat_pot/core/enums/response_type.dart';
 import 'package:ai_chat_pot/core/service_locator/service_locator.dart';
 import 'package:ai_chat_pot/core/static_data/shared_prefrences_key.dart';
 import 'package:hydrated_bloc/hydrated_bloc.dart';
@@ -14,12 +15,13 @@ import 'chat_state.dart';
 ChatHistoryEntity? currentSession;
 
 class ChatCubit extends Cubit<ChatState> {
-  final sharedPreferences = serviceLocator<SharedPreferences>();
+  final storage = serviceLocator<SharedPreferences>();
   ChatController controller = serviceLocator();
   ChatCubit() : super(ChatState(messages: [], conversationsInHistory: []));
   void init() async {
+    // load the chat from cache
     List<String> conversationsInHistoryJson =
-        sharedPreferences.getStringList(ShPrefKey.chatHistoryData) ?? [];
+        storage.getStringList(ShPrefKey.chatHistoryData) ?? [];
     List<ChatHistoryEntity> conversationsInHistory =
         conversationsInHistoryJson
             .map((json) => ChatHistoryEntity.fromJson(jsonDecode(json)))
@@ -27,14 +29,14 @@ class ChatCubit extends Cubit<ChatState> {
             .toList();
     if (currentSession == null) {
       currentSession = ChatHistoryEntity(timestamp: DateTime.now());
-      await sharedPreferences.setStringList(ShPrefKey.chatHistoryData, [
+      await storage.setStringList(ShPrefKey.chatHistoryData, [
         jsonEncode(currentSession?.toJson()),
         ...conversationsInHistoryJson,
       ]);
       conversationsInHistory = [currentSession!, ...conversationsInHistory];
     }
     List<String> chatDataJson =
-        sharedPreferences.getStringList("${ShPrefKey.chatData}.${currentSession!.id}") ?? [];
+        storage.getStringList("${ShPrefKey.chatData}.${currentSession!.id}") ?? [];
     List<ChatMessageEntity> chatData =
         chatDataJson.map((chat) => ChatMessageEntity.fromJson(jsonDecode(chat))).toList();
     emit(
@@ -47,6 +49,11 @@ class ChatCubit extends Cubit<ChatState> {
         scrollToBottom: true,
       ),
     );
+    // cache the current server user session to memory
+    final res = await controller.initSession();
+    if (res.response == ResponseEnum.success && res.data != null) {
+      await storage.setInt(ShPrefKey.serverUserSession, res.data!);
+    }
   }
 
   Future<void> sendMessage(String text) async {
@@ -104,7 +111,7 @@ class ChatCubit extends Cubit<ChatState> {
     );
     final updatedMessages = state.messages.where((msg) => !msg.isTyping).toList()..add(botReply);
     emit(state.copyWith(messages: updatedMessages));
-    sharedPreferences.setStringList(
+    storage.setStringList(
       "${ShPrefKey.chatData}.${state.selectedConversation?.id}",
       state.messages.map((chat) => jsonEncode(chat.toJson())).toList(),
     );
@@ -115,7 +122,7 @@ class ChatCubit extends Cubit<ChatState> {
       (conversation) => conversation.id == conversationId,
     );
     List<String> chatDataJson =
-        sharedPreferences.getStringList("${ShPrefKey.chatData}.${selectedCoversation.id}") ?? [];
+        storage.getStringList("${ShPrefKey.chatData}.${selectedCoversation.id}") ?? [];
     List<ChatMessageEntity> chatData =
         chatDataJson.map((chat) => ChatMessageEntity.fromJson(jsonDecode(chat))).toList();
     emit(
@@ -135,7 +142,7 @@ class ChatCubit extends Cubit<ChatState> {
   }
 
   List<ChatHistoryEntity> cacheChatHistory(List<ChatHistoryEntity> conversations) {
-    sharedPreferences.setStringList(
+    storage.setStringList(
       ShPrefKey.chatHistoryData,
       conversations.map((conversation) => jsonEncode(conversation.toJson())).toList(),
     );

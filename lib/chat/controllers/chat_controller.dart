@@ -1,16 +1,24 @@
 // ignore_for_file: public_member_api_docs, sort_constructors_first
 import 'dart:async';
+import 'dart:convert';
 
 import 'package:ai_chat_pot/chat/entities/chat_message_entity.dart';
 import 'package:ai_chat_pot/chat/presentation/widgets/language_selector.dart';
 import 'package:ai_chat_pot/chat/presentation/widgets/toggle_assistance.dart';
 import 'package:ai_chat_pot/core/api_service/api_interceptors.dart';
+import 'package:ai_chat_pot/core/api_service/end_points.dart';
+import 'package:ai_chat_pot/core/enums/response_type.dart';
 import 'package:ai_chat_pot/core/heleprs/print_helper.dart';
+import 'package:ai_chat_pot/core/heleprs/snackbar.dart';
+import 'package:ai_chat_pot/core/models/api_response_model.dart';
 import 'package:ai_chat_pot/core/service_locator/service_locator.dart';
+import 'package:ai_chat_pot/core/static_data/shared_prefrences_key.dart';
 import 'package:dio/dio.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class ChatController {
   final Dio dio = serviceLocator();
+  final storage = serviceLocator<SharedPreferences>();
   void initDio() {
     dio.options.connectTimeout = const Duration(minutes: 2);
     dio.options.receiveTimeout = const Duration(minutes: 2);
@@ -122,11 +130,11 @@ class ChatController {
     final t = prt('_askBagTwo - ChatController');
     try {
       final response = await dio.post(
-        "https://raggy.gaztec.org/proxy",
+        EndPoint.generate,
         data: {
-          "method": "POST",
-          "body": {"question": question, 'lang': selectedLang?.localeCode},
-          "path": "generate",
+          "question": question,
+          'lang': selectedLang?.localeCode,
+          "userid": storage.getInt(ShPrefKey.serverUserSession),
         },
       );
       pr(response.data, t);
@@ -168,6 +176,22 @@ class ChatController {
       return pr(ChatResponse(text: 'Dio error: ${e.message ?? "unkwon error"}'), t);
     } catch (e) {
       return pr(ChatResponse(text: 'Error: $e'), t);
+    }
+  }
+
+  Future<ApiResponseModel<int>> initSession() async {
+    final t = prt('initSession - ChatController');
+    try {
+      final response = (await dio.get(EndPoint.initSession)).data;
+      pr(response, '$t - response');
+      return pr(ApiResponseModel(response: ResponseEnum.success, data: response?['userid']), t);
+    } catch (e) {
+      String errorMessage = e.toString();
+      if (e is DioException) {
+        errorMessage = jsonEncode(e.response?.data ?? 'Unknown error occurred');
+      }
+      showSnackbar('Error', errorMessage, true);
+      return pr(ApiResponseModel(errorMessage: errorMessage, response: ResponseEnum.failed), t);
     }
   }
 }
