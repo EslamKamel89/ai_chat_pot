@@ -153,6 +153,22 @@ class ChatController {
     }
   }
 
+  Future<ApiResponseModel<String>> getAyat(String question) async {
+    final t = prt('getAyat - ChatController');
+    try {
+      final response = (await dio.post(EndPoint.ayat, data: {"question": question})).data;
+      pr(response, '$t - response');
+      return pr(ApiResponseModel(response: ResponseEnum.success, data: response?['Ayat']), t);
+    } catch (e) {
+      String errorMessage = e.toString();
+      if (e is DioException) {
+        errorMessage = jsonEncode(e.response?.data ?? 'Unknown error occurred');
+      }
+      showSnackbar('Error', errorMessage, true);
+      return pr(ApiResponseModel(errorMessage: errorMessage, response: ResponseEnum.failed), t);
+    }
+  }
+
   Future _searchRag(
     String question,
     ChatResponse chatResponse,

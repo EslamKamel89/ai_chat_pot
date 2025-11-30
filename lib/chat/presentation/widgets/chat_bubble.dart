@@ -1,12 +1,11 @@
 import 'package:ai_chat_pot/chat/entities/chat_message_entity.dart';
 import 'package:ai_chat_pot/chat/helpers/clean_reply.dart';
-import 'package:ai_chat_pot/chat/presentation/widgets/language_selector.dart';
 import 'package:ai_chat_pot/chat/presentation/widgets/rating_comment_widget.dart';
+import 'package:ai_chat_pot/chat/presentation/widgets/styled_html_view.dart';
 import 'package:ai_chat_pot/core/heleprs/print_helper.dart';
 import 'package:ai_chat_pot/utils/assets/assets.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter_html/flutter_html.dart';
 import 'package:lottie/lottie.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
 import 'package:share_plus/share_plus.dart';
@@ -39,15 +38,27 @@ class ChatBubble extends StatelessWidget {
               clipBehavior: Clip.none,
               children: [
                 Container(
-                  margin: const EdgeInsets.only(left: 8, right: 8, bottom: 20),
-                  padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                  // margin: const EdgeInsets.only(left: 8, right: 8, bottom: 20),
+                  // padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
                   decoration: BoxDecoration(
-                    color: isUser ? Colors.green[200] : Colors.grey[300],
+                    // color: isUser ? Colors.green[200] : Colors.grey[300],
                     borderRadius: BorderRadius.circular(16),
                   ),
                   child:
                       message.isTyping
-                          ? Lottie.asset(AssetsData.loading, height: 100, width: double.infinity)
+                          ? Container(
+                            margin: const EdgeInsets.only(left: 8, right: 8, bottom: 40, top: 20),
+                            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                            decoration: BoxDecoration(
+                              color: Colors.grey[300],
+                              borderRadius: BorderRadius.circular(16),
+                            ),
+                            child: Lottie.asset(
+                              AssetsData.loading,
+                              height: 100,
+                              width: double.infinity,
+                            ),
+                          )
                           // Row(
                           //   mainAxisAlignment: MainAxisAlignment.center,
                           //   children: [
@@ -84,20 +95,10 @@ class ChatBubble extends StatelessWidget {
                             //     a: Theme.of(context).textTheme.bodyMedium?.copyWith(color: Colors.blue),
                             //   ),
                             // ),
-                            child: Html(
-                              data: pr(cleanReply(message.text), 'clean reply'),
-                              // textAlign: TextAlign.right,
-                              style: {
-                                'h1': Style(fontSize: FontSize(30)),
-                                'h2': Style(fontSize: FontSize(28)),
-                                'p': Style(fontSize: FontSize(16)),
-                                '*': Style(
-                                  textAlign:
-                                      selectedLang?.localeCode == 'ar'
-                                          ? TextAlign.right
-                                          : TextAlign.left,
-                                ),
-                              },
+                            child: StyledHtmlView(
+                              rawResponseHtml: pr(cleanReply(message.text), 'clean reply'),
+                              addStyling: true,
+                              accentColor: Colors.green,
                             ),
                           ),
                 ),

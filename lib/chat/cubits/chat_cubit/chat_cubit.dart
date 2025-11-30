@@ -3,7 +3,6 @@ import 'dart:convert';
 import 'package:ai_chat_pot/chat/controllers/chat_controller.dart';
 import 'package:ai_chat_pot/chat/entities/chat_history_entity.dart';
 import 'package:ai_chat_pot/chat/entities/chat_message_entity.dart';
-import 'package:ai_chat_pot/chat/presentation/widgets/toggle_assistance.dart';
 import 'package:ai_chat_pot/core/enums/response_type.dart';
 import 'package:ai_chat_pot/core/service_locator/service_locator.dart';
 import 'package:ai_chat_pot/core/static_data/shared_prefrences_key.dart';
@@ -91,30 +90,34 @@ class ChatCubit extends Cubit<ChatState> {
       chatHistoryId: state.currentSessionConversation!.id!,
     );
     emit(state.copyWith(messages: [...state.messages, typingIndicator], scrollToBottom: true));
-    final chatResponse = await controller.ask(text, lastMessage);
-    String response = chatResponse.text ?? '';
-    if (getAssistanceId() == 'rag') {
-      response = formatMessageToHtml(response);
-    }
-    if (chatResponse.ayat != null && chatResponse.ayat?.isNotEmpty == true) {
-      response += formatVersesToHtml(chatResponse.ayat ?? []);
-    }
-    // if (chatResponse.searchMessage != null) {
-    //   response += formatMessageToHtml(chatResponse.searchMessage!);
-    // }
     final botReply = ChatMessageEntity(
-      text: '<div>$response </div>',
+      text: '',
       isUser: false,
       chatHistoryId: state.currentSessionConversation!.id!,
       question: userMessage.text,
-      searchId: chatResponse.searchId,
     );
     final updatedMessages = state.messages.where((msg) => !msg.isTyping).toList()..add(botReply);
-    emit(state.copyWith(messages: updatedMessages));
-    storage.setStringList(
-      "${ShPrefKey.chatData}.${state.selectedConversation?.id}",
-      state.messages.map((chat) => jsonEncode(chat.toJson())).toList(),
-    );
+
+    controller.ask(text, lastMessage).then((chatResponse) {
+      String response = chatResponse.text ?? '';
+      botReply.text = '  <div>$response </div> ${botReply.text} ';
+      botReply.searchId = chatResponse.searchId;
+      emit(state.copyWith(messages: updatedMessages));
+      storage.setStringList(
+        "${ShPrefKey.chatData}.${state.selectedConversation?.id}",
+        state.messages.map((chat) => jsonEncode(chat.toJson())).toList(),
+      );
+    });
+    // controller.getAyat(text).then((ayat) {
+    //   if (ayat.response == ResponseEnum.success) {
+    //     botReply.text = ' ${botReply.text} <div>${ayat.data}</div>';
+    //     emit(state.copyWith(messages: updatedMessages));
+    //     storage.setStringList(
+    //       "${ShPrefKey.chatData}.${state.selectedConversation?.id}",
+    //       state.messages.map((chat) => jsonEncode(chat.toJson())).toList(),
+    //     );
+    //   }
+    // });
   }
 
   void selectConversation(String conversationId) {

@@ -1,12 +1,12 @@
 // ignore_for_file: public_member_api_docs, sort_constructors_first
 class ChatMessageEntity {
   String? id;
-  final String chatHistoryId;
-  final String text;
-  final bool isUser;
-  final bool isTyping;
-  final bool hasFollowUp;
-  final String? searchId;
+  String chatHistoryId;
+  String text;
+  bool isUser;
+  bool isTyping;
+  bool hasFollowUp;
+  String? searchId;
   String? question;
 
   ChatMessageEntity({
