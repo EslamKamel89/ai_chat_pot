@@ -7,6 +7,7 @@ import 'package:ai_chat_pot/core/widgets/default_screen_padding.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:wakelock_plus/wakelock_plus.dart';
 
 class ChatScreen extends StatefulWidget {
   const ChatScreen({super.key});
@@ -21,6 +22,7 @@ class _ChatScreenState extends State<ChatScreen> {
   @override
   void initState() {
     controller = context.read<ChatCubit>();
+    WakelockPlus.enable();
     super.initState();
   }
 
