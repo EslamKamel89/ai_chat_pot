@@ -20,7 +20,10 @@ class ChatBubble extends StatelessWidget {
     final isUser = message.isUser;
     final avatar =
         isUser
-            ? CircleAvatar(child: Icon(Icons.person, color: Colors.white, size: 16))
+            ? Container(
+              margin: EdgeInsets.all(5),
+              child: CircleAvatar(child: Icon(Icons.person, color: Colors.white, size: 16)),
+            )
             : CircleAvatar(
               backgroundColor: Colors.green.withOpacity(0.05),
               child: Image.asset(AssetsData.logoSmall, height: 30),
@@ -47,7 +50,8 @@ class ChatBubble extends StatelessWidget {
                   child:
                       message.isTyping
                           ? Container(
-                            margin: const EdgeInsets.only(left: 8, right: 8, bottom: 40, top: 20),
+                            margin: EdgeInsets.only(left: 8, right: 8, bottom: 40, top: 20),
+
                             padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
                             decoration: BoxDecoration(
                               color: Colors.grey[300],
@@ -83,18 +87,6 @@ class ChatBubble extends StatelessWidget {
                                 ),
                               );
                             },
-
-                            // child: MarkdownBody(
-                            //   data: cleanReply(message.text),
-                            //   // textAlign: TextAlign.right,
-                            //   styleSheet: MarkdownStyleSheet(
-                            //     p: TextStyle(color: Colors.green),
-                            //     listBullet: Theme.of(
-                            //       context,
-                            //     ).textTheme.bodyMedium?.copyWith(color: Colors.green),
-                            //     a: Theme.of(context).textTheme.bodyMedium?.copyWith(color: Colors.blue),
-                            //   ),
-                            // ),
                             child: StyledHtmlView(
                               rawResponseHtml: pr(cleanReply(message.text), 'clean reply'),
                               addStyling: true,
@@ -148,7 +140,7 @@ class ChatBubble extends StatelessWidget {
               ],
             ),
           ),
-          if (!isUser) avatar,
+          // if (!isUser) avatar,
         ],
       ),
     );

@@ -39,7 +39,7 @@ class StyledHtmlView extends StatelessWidget {
     return Directionality(
       textDirection: TextDirection.rtl,
       child: SingleChildScrollView(
-        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
+        // padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
         child: Container(
           width: double.infinity,
           padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 14),

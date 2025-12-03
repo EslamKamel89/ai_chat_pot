@@ -3,7 +3,6 @@ import 'package:ai_chat_pot/chat/cubits/chat_cubit/chat_state.dart';
 import 'package:ai_chat_pot/chat/presentation/widgets/chat_bubble.dart';
 import 'package:ai_chat_pot/chat/presentation/widgets/chat_histroy_drawer.dart';
 import 'package:ai_chat_pot/chat/presentation/widgets/message_input.dart';
-import 'package:ai_chat_pot/core/widgets/default_screen_padding.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -55,39 +54,37 @@ class _ChatScreenState extends State<ChatScreen> {
                   }
                 },
                 builder: (context, state) {
-                  return DefaultScreenPadding(
-                    child: Column(
-                      children: [
-                        if (state.messages.isNotEmpty)
-                          Expanded(
-                            child: ListView.builder(
-                              controller: _scrollController,
-                              itemCount: state.messages.length,
-                              itemBuilder: (context, index) {
-                                final message = state.messages[index];
-                                return ChatBubble(
-                                  message: message,
-                                ).animate().fadeIn(duration: 300.ms);
-                              },
-                            ),
+                  return Column(
+                    children: [
+                      if (state.messages.isNotEmpty)
+                        Expanded(
+                          child: ListView.builder(
+                            controller: _scrollController,
+                            itemCount: state.messages.length,
+                            itemBuilder: (context, index) {
+                              final message = state.messages[index];
+                              return ChatBubble(
+                                message: message,
+                              ).animate().fadeIn(duration: 300.ms);
+                            },
                           ),
-                        if (state.messages.isEmpty)
-                          Expanded(
-                            child: Center(
-                              child: Text(
-                                "اطرح سؤالاً",
-                                style: TextStyle(fontSize: 20, color: Colors.grey),
-                              ),
-                            ),
-                          ),
-                        MessageInput(
-                          onSend: (text) {
-                            controller.sendMessage(text);
-                            FocusScope.of(context).unfocus();
-                          },
                         ),
-                      ],
-                    ),
+                      if (state.messages.isEmpty)
+                        Expanded(
+                          child: Center(
+                            child: Text(
+                              "اطرح سؤالاً",
+                              style: TextStyle(fontSize: 20, color: Colors.grey),
+                            ),
+                          ),
+                        ),
+                      MessageInput(
+                        onSend: (text) {
+                          controller.sendMessage(text);
+                          FocusScope.of(context).unfocus();
+                        },
+                      ),
+                    ],
                   );
                 },
               ),
